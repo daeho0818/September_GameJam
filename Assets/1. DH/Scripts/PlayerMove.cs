@@ -52,16 +52,15 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        float h = Input.GetAxisRaw("Horizontal");
-        MoveFunc(h);
-        if (h == 0 && controller.playerAct.is_wind_zone)
+        MoveFunc(controller.Horizontal);
+        if (controller.Horizontal == 0 && controller.playerAct.is_wind_zone)
         {
             rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
         }
         else
             rigid.constraints = RigidbodyConstraints2D.None;
 
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+        if (controller.IsJump)
         {
             hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
 
@@ -69,7 +68,6 @@ public class PlayerMove : MonoBehaviour
             {
                 if (hit.transform.CompareTag("Platform"))
                 {
-                    Debug.Log("¿¿æ÷");
                     rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
                     break;
                 }

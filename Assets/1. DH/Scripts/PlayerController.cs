@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
     public PlayerAct playerAct;
 
     public Rigidbody2D rigid;
+
+    public bool IsJump { get; set; }
+    public float Horizontal { get; set; }
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -15,5 +18,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
+        Horizontal = Input.GetAxisRaw("Horizontal");
     }
 }
