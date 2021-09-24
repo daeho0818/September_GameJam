@@ -52,7 +52,14 @@ public class PlayerMove : MonoBehaviour
 
     void Update()
     {
-        MoveFunc(Input.GetAxisRaw("Horizontal"));
+        float h = Input.GetAxisRaw("Horizontal");
+        MoveFunc(h);
+        if (h == 0 && controller.playerAct.is_wind_zone)
+        {
+            rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+        }
+        else
+            rigid.constraints = RigidbodyConstraints2D.None;
 
         if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
         {
