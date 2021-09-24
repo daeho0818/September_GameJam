@@ -25,6 +25,15 @@ public class PlayerMove : MonoBehaviour
 
     delegate void Func(float h);
     Func MoveFunc;
+
+    StoreOrder storeOrder;
+    void Awake()
+    {
+        storeOrder = new StoreOrder();
+        Backstate = false;
+    }
+
+    bool Backstate;
     void Start()
     {
         switch (moveState)
@@ -49,27 +58,60 @@ public class PlayerMove : MonoBehaviour
                 break;
         }
     }
+    IEnumerator backOrder()
+    {
+        Backstate = true;
+        Order tempOrder = storeOrder.GetOrder(1);
+       
+        while (tempOrder != null)
+        {
+            for (int i = 0; i < tempOrder.duration; i++)
+            {
+                if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
+                {
+                    MoveFunc(tempOrder.h);
+                }
+                yield return null;
+                Debug.Log(tempOrder.duration);
+            }
+            tempOrder = storeOrder.GetOrder(1);
+        }
+        Backstate = false;
+
+    }
 
     void Update()
     {
-        MoveFunc(controller.Horizontal);
-        if (controller.Horizontal == 0 && controller.playerAct.is_wind_zone)
+        if (!Backstate)
         {
-            rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
-        }
-        else
-            rigid.constraints = RigidbodyConstraints2D.None;
+            float h = Input.GetAxisRaw("Horizontal");
+            MoveFunc(h);
 
-        if (controller.IsJump)
-        {
-            hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
+            Order order = new Order();
+            order.h = h;
+            order.orderType = OrderType.move;
+            order.duration = 0;
+            order.stage = 1;
+            storeOrder.PutOrder(order);
 
-            foreach (var hit in hits)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (hit.transform.CompareTag("Platform"))
+                StartCoroutine(backOrder());
+            }
+        
+
+            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
+
+                foreach (var hit in hits)
                 {
-                    rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                    break;
+                    if (hit.transform.CompareTag("Platform"))
+                    {
+                        Debug.Log("ÀÀ¾Ö");
+                        rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
+                        break;
+                    }
                 }
             }
         }
