@@ -9,6 +9,7 @@ public class PlayerAct : MonoBehaviour
     [Header("바람 관련")]
     [SerializeField] internal float up_power;
     [SerializeField] internal float max_pos_y_value;
+    public bool is_wind_zone = false;
 
     PlayerAction playerAction;
     void Start()
@@ -18,14 +19,30 @@ public class PlayerAct : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.Return))
-            playerAction.Act();
+        playerAction.Act(is_wind_zone);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("WindZone"))
+        {
+            is_wind_zone = true;
+            controller.rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("WindZone"))
+        {
+            is_wind_zone = false;
+            controller.rigid.constraints = RigidbodyConstraints2D.None;
+        }
     }
 }
 
 public abstract class PlayerAction
 {
-    public abstract void Act();
+    public abstract void Act(bool isPlay);
 }
 
 public class WindAct : PlayerAction
@@ -34,19 +51,34 @@ public class WindAct : PlayerAction
     Rigidbody2D rigid => playerAct.controller.rigid;
     float up_power => playerAct.up_power;
     float max_pos_y_value => playerAct.max_pos_y_value;
+
+    Coroutine coroutine = null;
+    Vector2 saveVelocity;
     public WindAct(PlayerAct playerAct)
     {
         this.playerAct = playerAct;
     }
-    public override void Act()
+    public override void Act(bool isPlay)
     {
+        if (!isPlay) return;
         if (rigid.transform.position.y > max_pos_y_value)
-            playerAct.Invoke("SetPosition", 0.1f);
+        {
+            if (coroutine == null)
+            {
+                saveVelocity = rigid.velocity;
+                coroutine = playerAct.StartCoroutine(SetPosition());
+            }
+        }
         else
+        {
             rigid.AddForce(Vector2.up * up_power);
+        }
     }
-    void SetPosition()
+    IEnumerator SetPosition()
     {
-        rigid.transform.position = new Vector2(rigid.transform.position.x, max_pos_y_value);
+        rigid.velocity = new Vector2(rigid.velocity.x, 0);
+        yield return new WaitForSeconds(0.5f);
+        rigid.velocity = saveVelocity;
+        coroutine = null;
     }
 }
