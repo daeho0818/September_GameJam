@@ -87,6 +87,13 @@ public class PlayerMove : MonoBehaviour
             float h = controller.Horizontal;
             MoveFunc(h);
 
+            if (h != 0)
+            {
+                if (rigid.velocity.y == 0)
+                    controller.playerAnimation.SetAnimatorState(1);
+                transform.localScale = new Vector2(1 * h, 1);
+            }
+
             if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
             else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
@@ -103,16 +110,24 @@ public class PlayerMove : MonoBehaviour
             }
 
 
-            if (controller.IsJump)
-            {
-                hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
+            hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
 
-                foreach (var hit in hits)
+            foreach (var hit in hits)
+            {
+                if (hit.transform.CompareTag("Platform"))
                 {
-                    if (hit.transform.CompareTag("Platform"))
+                    if (controller.IsJump && rigid.velocity.y == 0f)
                     {
+                        controller.playerAnimation.SetAnimatorState(2);
                         rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                        break;
+                        controller.IsJump = false;
+                    }
+                    else if (!controller.IsJump && rigid.velocity.y == 0)
+                    {
+                        if (h == 0)
+                        {
+                            controller.playerAnimation.SetAnimatorState(0);
+                        }
                     }
                 }
             }
