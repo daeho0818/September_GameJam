@@ -8,8 +8,23 @@ public class DemonPlayerController : PlayerController
     public int myStage;
     public Vector2 startPosition;
     public Quaternion startRotation;
+    SpriteRenderer[] sr;
     void Start()
     {
+        sr = GetComponentsInChildren < SpriteRenderer >();
+    }
+    public void setAlpha(float a)
+    {
+        if (sr == null)
+        {
+            sr = GetComponentsInChildren<SpriteRenderer>();
+        }
+        for (int i = 0; i < sr.Length; i++)
+        {
+            Color c = sr[i].color;
+            c.a = a;
+            sr[i].color = c;
+        }
     }
 
     private void OnEnable()
@@ -42,35 +57,48 @@ public class DemonPlayerController : PlayerController
     {
 
     }
+    bool isReady = true;
     IEnumerator backOrder()
     {//////////////Á×À¸¸é 0ºÎÅÍ ´Ù½ÃÇÏµµ·Ï
         if (!isBack&&!playerMove.isMain)
         {
             do
             {
-                transform.position = startPosition;
-                transform.rotation = startRotation;
-                playerAnimation.SetAnimatorState(0);
-                for (int i = 0; i < storeOrder.orders.Count; i++)
+                if (isReady)
                 {
-                    Order tempOrder = storeOrder.orders[i] as Order;
-
-                    transform.position = tempOrder.position;
-                    playerAnimation.SetAnimatorState(tempOrder.animState);
-                    Horizontal = tempOrder.direction;
-                    if (tempOrder.shotWind)
+                    transform.position = startPosition;
+                    transform.rotation = startRotation;
+                    playerAnimation.SetAnimatorState(0);
+                    for (int i = 0; i < storeOrder.orders.Count; i++)
                     {
-                        //¼¦
+                        Order tempOrder = storeOrder.orders[i] as Order;
+
+                        transform.position = tempOrder.position;
+                        playerAnimation.SetAnimatorState(tempOrder.animState);
+                        Horizontal = tempOrder.direction;
+                        if (tempOrder.shotWind)
+                        {
+                            //¼¦
+                        }
+                        yield return new WaitForFixedUpdate();
                     }
-                    yield return new WaitForFixedUpdate();
+                    Horizontal = 0;
+                    isReady = false;
+                    GameManager.Instance.demonReady();
                 }
-                Horizontal = 0;
+                else
+                {
+                    yield return null;
+                    if (GameManager.Instance.demonList.Count <= 1)
+                        ready();
+                }
             } while (storeOrder.orders.Count > 0 && !isBack);
         }
     }
     IEnumerator resetBackOrder()
     {
         isBack = true;
+        float myDuration = 3f;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = true;
         for (int i = storeOrder.orders.Count-1; i >= 0; i--)
@@ -84,7 +112,7 @@ public class DemonPlayerController : PlayerController
             {
                 //¼¦
             }
-            yield return new WaitForFixedUpdate();
+            yield return new WaitForSeconds(myDuration/storeOrder.orders.Count);
         }
 
         Horizontal = 0;
@@ -104,7 +132,7 @@ public class DemonPlayerController : PlayerController
             {
                 //¼¦
             }
-            yield return new WaitForFixedUpdate();
+            yield return new WaitForSeconds(myDuration / storeOrder.orders.Count);
         }
 
         if (playerMove.isMain)
@@ -113,7 +141,8 @@ public class DemonPlayerController : PlayerController
         isBack = false;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = false;
-        
+        else
+        StartCoroutine(backOrder());
     }
     private void FixedUpdate()
     {
@@ -122,6 +151,10 @@ public class DemonPlayerController : PlayerController
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         
+    }
+    public void ready()
+    {
+        isReady = true;
     }
     public void resetStart()
     {

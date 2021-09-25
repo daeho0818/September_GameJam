@@ -22,10 +22,23 @@ public class GameManager : MonoBehaviour
     public bool window_open = false;
 
     bool stage_reset = false;
-
+    int readyDemonCount = 0;
     private void Awake()
     {
         Instance = this;
+    }
+    public void demonReady()
+    {
+        readyDemonCount++;
+        if (readyDemonCount > 1||demonList.Count<=1)
+        {
+            GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+            foreach (var demon in demons)
+            {
+                demon.GetComponent<DemonPlayerController>().ready();
+            }
+            readyDemonCount = 0;
+        }
     }
     void Start()
     {
@@ -71,6 +84,7 @@ public class GameManager : MonoBehaviour
     void GoToSpawnPoint()
     {
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
+        player.playerMove.storeOrder.ResetOrder(GetStageIndex());
     }
     // IEnumerator StartCamAct()
     // {
@@ -126,10 +140,15 @@ public class GameManager : MonoBehaviour
                 if (demonList.Count >=2 )
                 {
                     (demonList[demonList.Count - 2] as GameObject).SetActive(true);
+                    (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(80);
+
                 }
                 Destroy(demon);
             }
         }
+
+        if (demonList.Count > 0)
+            (demonList[demonList.Count - 1] as GameObject).GetComponent<DemonPlayerController>().setAlpha(90);
         StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
         foreach (var obj in objects)
         {
@@ -149,8 +168,6 @@ public class GameManager : MonoBehaviour
     }
     public void setControl()
     {
-
-        Time.timeScale = 1;
 
         player.enabled = true;
         demonPlayer.enabled = false;
@@ -187,7 +204,7 @@ public class GameManager : MonoBehaviour
     {
         return current_stage_index + 1;
     }
-    ArrayList demonList;
+    public ArrayList demonList;
     public void spawnDemon()
     {
         GameObject demon = Instantiate(DemonPrefab);
@@ -195,11 +212,17 @@ public class GameManager : MonoBehaviour
         dpc.myStage = current_stage_index; // 인덱스를 더한 뒤 불리기 때문에..
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         dpc.stage_number = current_stage_index;
+        dpc.setAlpha(0.9f);
         demon.SetActive(true);
         demonList.Add(demon);
+
+        if (demonList.Count>=2)
+        {
+            (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(80);
+        }
         if (demonList.Count >= 3)
         {
-            for (int i = 0; i < demonList.Count-2; i++)
+            for (int i = 0; i < demonList.Count - 2; i++)
             {
                 (demonList[i] as GameObject).SetActive(false);
             }
@@ -207,7 +230,6 @@ public class GameManager : MonoBehaviour
     }
     public void onResetButtonClicked()
     {
-        Time.timeScale = 2;
         player.enabled = false;
         demonPlayer.myStage = GetStageIndex();
         demonPlayer.startPosition = player.transform.position;
