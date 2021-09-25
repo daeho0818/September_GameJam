@@ -7,32 +7,38 @@ public class SoundManager : MonoBehaviour
     public static SoundManager Instance { get; private set; } = null;
     public AudioClip stage_clear;
 
-    [SerializeField] AudioSource[] audioSources;
+    [SerializeField] AudioSource musicSource;
+    [SerializeField] AudioSource sfxSource;
 
     private void Awake()
     {
         Instance = this;
     }
-    void Start()
-    {
-    }
-
-    void Update()
+    public void PlayMusic(AudioClip music, float volume = 0.5f)
     {
 
-    }
-
-    public void SoundPlay(AudioClip audio_clip, float volume = 0.5f, bool loop = false)
-    {
-        foreach (var audioSource in audioSources)
+        if (music != null)
         {
-            if (!audioSource.isPlaying)
-            {
-                audioSource.clip = audio_clip;
-                audioSource.volume = volume;
-                audioSource.loop = loop;
-                audioSource.Play();
-            }
+            if (musicSource.clip == music)
+                return;
+            musicSource.clip = music;
+            musicSource.Play();
+        }
+    }
+    public void StopMusic()
+    {
+        musicSource.Stop();
+        musicSource.clip = null;
+    }
+    public void PlaySound(AudioClip sound)
+    {
+        PlaySound(sound, 1f);
+    }
+    public void PlaySound(AudioClip sound, float volume)
+    {
+        if (sound != null)
+        {
+            sfxSource.PlayOneShot(sound, volume);
         }
     }
 }
