@@ -21,4 +21,11 @@ public class PlayerController : MonoBehaviour
         IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.CompareTag("Flag"))
+        {
+            GameManager.Instance.stage_clear = true;
+        }
+    }
 }
