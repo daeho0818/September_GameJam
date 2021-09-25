@@ -6,10 +6,9 @@ public class PlayerAnimation : MonoBehaviour
 {
     public PlayerController controller;
 
-    Animator animator;
+    [SerializeField] Animator animator;
     void Start()
     {
-        animator = GetComponent<Animator>();
     }
 
     void Update()
