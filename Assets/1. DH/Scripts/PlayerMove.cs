@@ -62,7 +62,7 @@ public class PlayerMove : MonoBehaviour
     {
         Backstate = true;
         Order tempOrder = storeOrder.GetOrder(1);
-       
+
         while (tempOrder != null)
         {
             for (int i = 0; i < tempOrder.duration; i++)
@@ -84,8 +84,11 @@ public class PlayerMove : MonoBehaviour
     {
         if (!Backstate)
         {
-            float h = Input.GetAxisRaw("Horizontal");
+            float h = controller.Horizontal;
             MoveFunc(h);
+
+            if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+            else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
             Order order = new Order();
             order.h = h;
@@ -98,9 +101,9 @@ public class PlayerMove : MonoBehaviour
             {
                 StartCoroutine(backOrder());
             }
-        
 
-            if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+
+            if (controller.IsJump)
             {
                 hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
 
@@ -108,7 +111,6 @@ public class PlayerMove : MonoBehaviour
                 {
                     if (hit.transform.CompareTag("Platform"))
                     {
-                        Debug.Log("ÀÀ¾Ö");
                         rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
                         break;
                     }
