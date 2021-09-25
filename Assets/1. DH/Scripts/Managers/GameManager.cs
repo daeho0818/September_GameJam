@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     {
         if (stage_clear)
         {
+            // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
             LoadNextStage();
             // StartCoroutine(StartCamAct());
         }
