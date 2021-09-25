@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public CameraActor cameraActor;
 
     public GameObject[] stages;
+    [SerializeField] GameObject option;
     [SerializeField] PlayerController player;
     [SerializeField] DemonPlayerController demonPlayer;
 
@@ -18,7 +19,7 @@ public class GameManager : MonoBehaviour
     public int current_stage_index { get; set; } = 0;
 
     public bool stage_clear = false;
-    public bool stage_start = false;
+    public bool window_open = false;
 
     bool stage_reset = false;
 
@@ -38,6 +39,9 @@ public class GameManager : MonoBehaviour
 
         cameraActor = Camera.main.GetComponent<CameraActor>();
         // StartCoroutine(StartCamAct());
+
+        option.transform.GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { option.SetActive(false); window_open = false; });
+        option.transform.GetChild(1).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(() => { Application.Quit(); });
     }
 
     void Update()
@@ -54,6 +58,12 @@ public class GameManager : MonoBehaviour
             player.IsDestroy = false;
             // player.playerAnimation.SetAnimatorState(5);
             Invoke("GoToSpawnPoint", 2);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            option.SetActive(!option.activeSelf);
+            window_open = option.activeSelf;
         }
         if (stage_reset)
         {
@@ -98,7 +108,7 @@ public class GameManager : MonoBehaviour
             spawnDemon();
 
             player.playerAct.stage_number = current_stage_index + 1;
-            player.playerMove.storeOrder.ResetOrder(current_stage_index);
+            player.playerMove.storeOrder.ResetOrder(current_stage_index+1);
             StartCoroutine(StageAnimation());
         }
         else
@@ -108,7 +118,6 @@ public class GameManager : MonoBehaviour
     }
     public void LoadPastStage()
     {
-
         GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
         foreach (var demon in demons)
         {

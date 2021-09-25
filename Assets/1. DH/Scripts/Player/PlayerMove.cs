@@ -70,7 +70,7 @@ public class PlayerMove : MonoBehaviour
             firstFrame = false;
             return;
         }
-        if (isMain)
+        if (isMain&&!controller.isBack)
         {
             storeOrder.PutOrder(transform.position, controller.playerAnimation.GetAnimatorState(), (int)transform.localScale.x, GameManager.Instance.GetStageIndex(), false);
         }

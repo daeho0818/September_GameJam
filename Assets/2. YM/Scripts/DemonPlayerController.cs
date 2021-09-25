@@ -81,7 +81,11 @@ public class DemonPlayerController : PlayerController
 
         Horizontal = 0;
         if (playerMove.isMain)
+        {
             GameManager.Instance.LoadPastStage();
+
+            Debug.Log("?");
+        }
 
         for (int i = storeOrder.orders.Count - 1; i >= 0; i--)
         {
@@ -103,6 +107,7 @@ public class DemonPlayerController : PlayerController
         isBack = false;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = false;
+        
     }
     private void FixedUpdate()
     {

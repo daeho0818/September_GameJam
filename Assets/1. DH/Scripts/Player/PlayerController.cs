@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.stage_clear)
+        if (playerAct.is_wind_blow || GameManager.Instance.stage_clear || GameManager.Instance.window_open)
         {
             IsJump = false;
             Horizontal = 0;

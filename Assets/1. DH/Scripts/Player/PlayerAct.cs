@@ -31,9 +31,9 @@ public class PlayerAct : MonoBehaviour
         }
     }
     public bool is_wind_zone = false;
+    public bool is_wind_blow = false;
     [SerializeField] GameObject WindZonePrefab;
     public GameObject WindZone { get; set; } = null;
-    Coroutine coroutine = null;
 
     PlayerAction playerAction;
 
@@ -44,14 +44,11 @@ public class PlayerAct : MonoBehaviour
 
     void Update()
     {
-        if (WindZone)
+        if (controller.IsWindBlow && !is_wind_blow)
         {
-            if (coroutine == null)
-                coroutine = StartCoroutine(ObjectBlink(WindZone.GetComponent<SpriteRenderer>()));
-        }
-        if (controller.IsWindBlow)
-        {
-            controller.playerAnimation.SetAnimatorState(4);
+            is_wind_blow = true;
+            if (controller.rigid.velocity.y == 0)
+                controller.playerAnimation.SetAnimatorState(4);
             Invoke("BlowWind", 0.75f);
         }
 
@@ -64,7 +61,8 @@ public class PlayerAct : MonoBehaviour
         {
             DestroyWind();
         }
-        WindZone = Instantiate(WindZonePrefab, transform.position + Vector3.up / 0.5f, Quaternion.identity, GameManager.Instance.stages[GameManager.Instance.current_stage_index].transform);
+        WindZone = Instantiate(WindZonePrefab, GameObject.Find("WindParent").transform);
+        WindZone.transform.localPosition = Vector2.up;
         WindZone.GetComponent<StageObject>().stage_number = GameManager.Instance.current_stage_index + 1;
 
         Invoke("DestroyWind", 1);
@@ -73,8 +71,7 @@ public class PlayerAct : MonoBehaviour
     void DestroyWind()
     {
         Destroy(WindZone);
-        StopCoroutine(coroutine);
-        coroutine = null;
+        is_wind_blow = false;
     }
 
 
@@ -84,7 +81,6 @@ public class PlayerAct : MonoBehaviour
         {
             if (stage_number == collision.GetComponent<StageObject>().stage_number + 1)
             {
-                Debug.Log("응애 제발...");
                 controller.playerAnimation.SetAnimatorState(2);
                 is_wind_zone = true;
                 controller.rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
@@ -99,26 +95,6 @@ public class PlayerAct : MonoBehaviour
             {
                 is_wind_zone = false;
                 controller.rigid.constraints = RigidbodyConstraints2D.None;
-            }
-        }
-    }
-    IEnumerator ObjectBlink(SpriteRenderer renderer)
-    {
-        Color color;
-        while (true)
-        {
-            for (int i = 0; i < 20; i++)
-            {
-                color = renderer.color;
-                renderer.color = Color.Lerp(renderer.color, new Color(color.r, color.g, color.b, 0), 0.1f);
-                yield return new WaitForSeconds(0.05f);
-            }
-
-            for (int i = 0; i < 20; i++)
-            {
-                color = renderer.color;
-                renderer.color = Color.Lerp(renderer.color, new Color(color.r, color.g, color.b, 1), 0.1f);
-                yield return new WaitForSeconds(0.05f);
             }
         }
     }
