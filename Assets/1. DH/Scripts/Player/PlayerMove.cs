@@ -70,7 +70,7 @@ public class PlayerMove : MonoBehaviour
             firstFrame = false;
             return;
         }
-        if (isMain&&!controller.isBack)
+        if (isMain && !controller.isBack)
         {
             storeOrder.PutOrder(transform.position, controller.playerAnimation.GetAnimatorState(), (int)transform.localScale.x, GameManager.Instance.GetStageIndex(), false);
         }
@@ -84,9 +84,9 @@ public class PlayerMove : MonoBehaviour
         }
 
         float h = controller.Horizontal;
-        if(isMain)
-        MoveFunc(h);
-        
+        if (isMain)
+            MoveFunc(h);
+
         if (h != 0)
         {
 
@@ -95,7 +95,7 @@ public class PlayerMove : MonoBehaviour
             if (controller.isBack)
                 transform.localScale = new Vector2(1 * -h, 1);
 
-            if (rigid.velocity.y == 0)
+            if (rigid.velocity.y == 0 && isMain&&!controller.isBack && !controller.playerAct.is_wind_blow)
                 controller.playerAnimation.SetAnimatorState(1);
         }
 
@@ -104,30 +104,32 @@ public class PlayerMove : MonoBehaviour
         else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
-        if (isMain)
-            foreach (var hit in hits)
+        foreach (var hit in hits)
+        {
+            if (hit.transform.CompareTag("Platform"))
             {
-                if (hit.transform.CompareTag("Platform"))
+                if (jumpStart)
                 {
-                    if (jumpStart)
-                    {
-                        jumpStart = false;
-                    }
-                    if (controller.IsJump && rigid.velocity.y == 0f)
+                    jumpStart = false;
+                }
+                if (controller.IsJump && rigid.velocity.y == 0f)
+                {
+                    if (isMain&&!controller.isBack && !controller.playerAct.is_wind_blow)
                     {
                         controller.playerAnimation.SetAnimatorState(2);
                         rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
                         jumpStart = true;
                         controller.IsJump = false;
                     }
-                    else if (!controller.IsJump && rigid.velocity.y == 0)
+                }
+                else if (!controller.IsJump && rigid.velocity.y == 0)
+                {
+                    if (h == 0 && isMain&&!controller.isBack && !controller.playerAct.is_wind_blow)
                     {
-                        if (h == 0)
-                        {
-                            controller.playerAnimation.SetAnimatorState(0);
-                        }
+                        controller.playerAnimation.SetAnimatorState(0);
                     }
                 }
             }
+        }
     }
 }

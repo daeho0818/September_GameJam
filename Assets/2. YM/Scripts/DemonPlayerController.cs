@@ -14,19 +14,25 @@ public class DemonPlayerController : PlayerController
 
     private void OnEnable()
     {
-        StoreOrder playerStore = playerMove.storeOrder;
+        StoreOrder playerStore = GameObject.Find("Player").GetComponent<PlayerMove>().storeOrder;
 
-        storeOrder = new StoreOrder();
-        if(playerStore == null)
+        if (storeOrder != null)
         {
-            playerMove.storeOrder = new StoreOrder();
-            playerStore = playerMove.storeOrder;
         }
-        Order tempOrder = playerStore.GetOrder(myStage);
-        while (tempOrder != null)
+        else
         {
-            storeOrder.PutOrder(tempOrder);
-            tempOrder = playerStore.GetOrder(myStage);
+            storeOrder = new StoreOrder();
+            if (playerStore == null)
+            {
+                playerMove.storeOrder = new StoreOrder();
+                playerStore = playerMove.storeOrder;
+            }
+            Order tempOrder = playerStore.GetOrder(myStage);
+            while (tempOrder != null)
+            {
+                storeOrder.PutOrder(tempOrder);
+                tempOrder = playerStore.GetOrder(myStage);
+            }
         }
         StartCoroutine(backOrder());
     }
@@ -38,27 +44,29 @@ public class DemonPlayerController : PlayerController
     }
     IEnumerator backOrder()
     {//////////////Á×À¸¸é 0ºÎÅÍ ´Ù½ÃÇÏµµ·Ï
-        do
+        if (!isBack&&!playerMove.isMain)
         {
-            transform.position = startPosition;
-            transform.rotation = startRotation;
-            playerAnimation.SetAnimatorState(0);
-            for (int i = 0; i < storeOrder.orders.Count; i++)
+            do
             {
-                Order tempOrder = storeOrder.orders[i] as Order;
-
-                transform.position = tempOrder.position;
-                playerAnimation.SetAnimatorState(tempOrder.animState);
-                Horizontal = tempOrder.direction;
-                if (tempOrder.shotWind)
+                transform.position = startPosition;
+                transform.rotation = startRotation;
+                playerAnimation.SetAnimatorState(0);
+                for (int i = 0; i < storeOrder.orders.Count; i++)
                 {
-                    //¼¦
+                    Order tempOrder = storeOrder.orders[i] as Order;
+
+                    transform.position = tempOrder.position;
+                    playerAnimation.SetAnimatorState(tempOrder.animState);
+                    Horizontal = tempOrder.direction;
+                    if (tempOrder.shotWind)
+                    {
+                        //¼¦
+                    }
+                    yield return new WaitForFixedUpdate();
                 }
-                yield return new WaitForFixedUpdate();
-            }
-            Horizontal = 0;
-        } while (storeOrder.orders.Count>0&&!isBack);
-        
+                Horizontal = 0;
+            } while (storeOrder.orders.Count > 0 && !isBack);
+        }
     }
     IEnumerator resetBackOrder()
     {
@@ -83,8 +91,6 @@ public class DemonPlayerController : PlayerController
         if (playerMove.isMain)
         {
             GameManager.Instance.LoadPastStage();
-
-            Debug.Log("?");
         }
 
         for (int i = storeOrder.orders.Count - 1; i >= 0; i--)

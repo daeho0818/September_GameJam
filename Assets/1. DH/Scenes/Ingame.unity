@@ -569,6 +569,7 @@ GameObject:
   - component: {fileID: 219599300}
   - component: {fileID: 219599302}
   - component: {fileID: 219599301}
+  - component: {fileID: 219599303}
   m_Layer: 0
   m_Name: WindZone
   m_TagString: WindZone
@@ -667,6 +668,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &219599303
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 219599299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66692ea988a57a54ea46f43a0eb23357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childObjects: []
+  is_destroy_object: 0
+  stage_number: 4
 --- !u!1001 &424294706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -688,11 +704,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.78
+      value: -10.39
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.26
+      value: -2.34
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1062,7 +1078,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2395792014060927088, guid: d15b0641e0f2d714696244a5e5d59633, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2395792014060927088, guid: d15b0641e0f2d714696244a5e5d59633, type: 3}
       propertyPath: m_LocalScale.x
@@ -1342,7 +1358,7 @@ Transform:
   - {fileID: 430145284}
   - {fileID: 1092399185}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &918058909
 MonoBehaviour:
@@ -1517,7 +1533,7 @@ Transform:
   - {fileID: 1040090673}
   - {fileID: 88521716}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &972454066
 MonoBehaviour:
@@ -1601,11 +1617,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 11.78
+      value: 3.63
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.1
+      value: -3.35
       objectReference: {fileID: 0}
     - target: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1721,7 +1737,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1114554613
 MonoBehaviour:
@@ -1966,6 +1982,7 @@ GameObject:
   - component: {fileID: 1270027357}
   - component: {fileID: 1270027359}
   - component: {fileID: 1270027358}
+  - component: {fileID: 1270027360}
   m_Layer: 0
   m_Name: WindZone
   m_TagString: WindZone
@@ -2064,6 +2081,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1270027360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1270027356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66692ea988a57a54ea46f43a0eb23357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childObjects: []
+  is_destroy_object: 0
+  stage_number: 3
 --- !u!1 &1288543216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2117,7 +2149,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1374010141
 GameObject:
@@ -2142,12 +2174,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1374010141}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 1708766173}
-  m_RootOrder: 8
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1438466688
 PrefabInstance:
@@ -2215,6 +2247,36 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6385110058153329194, guid: 7038515dcdbb5cc47a9be6230b98ea55, type: 3}
   m_PrefabInstance: {fileID: 1438466688}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1680159561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1680159562}
+  m_Layer: 7
+  m_Name: blowPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1680159562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680159561}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.144, y: 2.158, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1708766173}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1708766167 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5857152684782794142, guid: d15b0641e0f2d714696244a5e5d59633, type: 3}
@@ -2247,6 +2309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 1708766171}
+  Mouth: {fileID: 1680159561}
   up_power: 5
   max_pos_y_value: 10
   is_wind_zone: 0
@@ -2269,7 +2332,7 @@ MonoBehaviour:
   move_speed: 10
   move_max_speed: 5
   moveState: 0
-  jump_power: 5
+  jump_power: 10
   isMain: 1
 --- !u!114 &1708766171
 MonoBehaviour:
@@ -2501,7 +2564,7 @@ Transform:
   - {fileID: 81294398}
   - {fileID: 62296014}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1865965257
 MonoBehaviour:
@@ -2663,7 +2726,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2014720612
 GameObject:
@@ -2697,7 +2760,7 @@ Transform:
   - {fileID: 2028500773}
   - {fileID: 424294707}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2014720614
 MonoBehaviour:
@@ -2854,7 +2917,7 @@ RectTransform:
   - {fileID: 584153732}
   - {fileID: 1926806649}
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

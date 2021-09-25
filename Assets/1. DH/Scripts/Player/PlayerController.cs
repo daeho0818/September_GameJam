@@ -19,13 +19,13 @@ public class PlayerController : MonoBehaviour
     public float Horizontal { get; set; }
     private void Awake()
     {
-        playerMove = GameObject.Find("Player").GetComponent<PlayerMove>();
         rigid = GetComponent<Rigidbody2D>();
         isBack = false;
     }
 
     private void Update()
     {
+        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
         if (playerAct.is_wind_blow || GameManager.Instance.stage_clear || GameManager.Instance.window_open)
         {
             IsJump = false;
@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
-        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
+       
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
     public virtual void OnTriggerEnter2D(Collider2D collision)

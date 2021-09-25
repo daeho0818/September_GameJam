@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
+        demonList = new ArrayList();
         stages[0].SetActive(true);
         player.gameObject.SetActive(false);
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
@@ -65,11 +66,7 @@ public class GameManager : MonoBehaviour
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
         }
-        if (stage_reset)
-        {
-            demonPlayer.resetStart();
-            stage_reset = false;
-        }
+        
     }
     void GoToSpawnPoint()
     {
@@ -118,13 +115,18 @@ public class GameManager : MonoBehaviour
     }
     public void LoadPastStage()
     {
-        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
-        foreach (var demon in demons)
+        for (int i = demonList.Count-1; i >= 0; i--)
         {
-
+            var d = demonList[i];
+            var demon = d as GameObject;
             if (demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
             {
                 demonPlayer.storeOrder = demon.GetComponent<DemonPlayerController>().storeOrder;
+                demonList.Remove(demon);
+                if (demonList.Count >=2 )
+                {
+                    (demonList[demonList.Count - 2] as GameObject).SetActive(true);
+                }
                 Destroy(demon);
             }
         }
@@ -185,6 +187,7 @@ public class GameManager : MonoBehaviour
     {
         return current_stage_index + 1;
     }
+    ArrayList demonList;
     public void spawnDemon()
     {
         GameObject demon = Instantiate(DemonPrefab);
@@ -193,6 +196,14 @@ public class GameManager : MonoBehaviour
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         dpc.stage_number = current_stage_index;
         demon.SetActive(true);
+        demonList.Add(demon);
+        if (demonList.Count >= 3)
+        {
+            for (int i = 0; i < demonList.Count-2; i++)
+            {
+                (demonList[i] as GameObject).SetActive(false);
+            }
+        }
     }
     public void onResetButtonClicked()
     {
@@ -203,6 +214,13 @@ public class GameManager : MonoBehaviour
         demonPlayer.startRotation = player.transform.rotation;
         demonPlayer.enabled = true;
         stage_reset = true;
+
+        if (stage_reset)
+        {
+            demonPlayer.resetStart();
+            stage_reset = false;
+        }
+
         GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
         foreach (var demon in demons)
         {

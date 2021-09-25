@@ -181,8 +181,8 @@ MonoBehaviour:
   m_BoneTransforms:
   - {fileID: 2776592306324427237}
   m_Bounds:
-    m_Center: {x: 0.00035500526, y: 0.00007531047, z: 0}
-    m_Extent: {x: 0.24958509, y: 0.3690851, z: 0}
+    m_Center: {x: -0.8475629, y: 0.6825615, z: 0}
+    m_Extent: {x: 0.4757122, y: 0.29880908, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
 --- !u!1 &342811757757544284
@@ -286,8 +286,8 @@ MonoBehaviour:
   - {fileID: 8582289021836770962}
   - {fileID: 4355998640772107908}
   m_Bounds:
-    m_Center: {x: 0.00000017881393, y: -0.0024201274, z: 0}
-    m_Extent: {x: 0.14500028, y: 0.3175798, z: 0}
+    m_Center: {x: 0.041306272, y: -0.070966154, z: 0}
+    m_Extent: {x: 0.1724493, y: 0.25210983, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
 --- !u!1 &469359863522782674
@@ -420,8 +420,8 @@ MonoBehaviour:
   m_BoneTransforms:
   - {fileID: 941523210347345023}
   m_Bounds:
-    m_Center: {x: 0.00058496, y: -0.0002450347, z: 0}
-    m_Extent: {x: 0.834415, y: 0.701655, z: 0}
+    m_Center: {x: -0.10506296, y: 0.021826744, z: 0}
+    m_Extent: {x: 0.7197887, y: 0.84152293, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
 --- !u!1 &618623593782219443
@@ -496,6 +496,7 @@ Transform:
   - {fileID: 7372297788703058720}
   - {fileID: 4956346001397697330}
   - {fileID: 2766527227232851440}
+  - {fileID: 1133223284486351816}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -592,10 +593,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 3241213095679514335}
+  Mouth: {fileID: 5009253387089574989}
   up_power: 5
   max_pos_y_value: 10
   is_wind_zone: 0
-  WindZonePrefab: {fileID: 1215666786017015155, guid: 7e80922118e4d084396021a4223817e6, type: 3}
+  is_wind_blow: 0
+  WindZonePrefab: {fileID: 8281881787262307069, guid: deefcb8924f1fbc40b55548f5b2495eb, type: 3}
 --- !u!114 &3241213095679514272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -627,7 +630,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a3da2be8fe3dc240a1bbf360c55767e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerMove: {fileID: 0}
+  playerMove: {fileID: 3241213095679514272}
   playerAct: {fileID: 3241213095679514273}
   playerAnimation: {fileID: 3241213095679514274}
   rigid: {fileID: 3241213095679514277}
@@ -737,8 +740,8 @@ MonoBehaviour:
   - {fileID: 1300510807652382586}
   - {fileID: 2390683239940225014}
   m_Bounds:
-    m_Center: {x: 0.0021197796, y: -0.000000029802322, z: 0}
-    m_Extent: {x: 0.14288032, y: 0.27500004, z: 0}
+    m_Center: {x: 0.021685481, y: -0.07187608, z: 0}
+    m_Extent: {x: 0.16872382, y: 0.21129465, z: 0}
   m_UseBatching: 1
   m_AlwaysUpdate: 1
 --- !u!1 &3495504986772627728
@@ -771,6 +774,36 @@ Transform:
   - {fileID: 2776592306324427237}
   m_Father: {fileID: 6668779169494063920}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5009253387089574989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1133223284486351816}
+  m_Layer: 6
+  m_Name: blowPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1133223284486351816
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5009253387089574989}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.144, y: 2.158, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6668779169494063920}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5718912455206915596
 GameObject:
