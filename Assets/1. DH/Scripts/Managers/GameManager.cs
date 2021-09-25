@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         {
             spawnDemon();
             // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
-            LoadNextStage();
+            Invoke("LoadNextStage", 2);
             // StartCoroutine(StartCamAct());
         }
     }
@@ -54,10 +54,21 @@ public class GameManager : MonoBehaviour
     {
         if (current_stage_index + 1 < all_stage_count)
         {
+            StageObject[] objects = stages[current_stage_index].GetComponentsInChildren<StageObject>();
             if (current_stage_index >= 0)
-                stages[current_stage_index++].SetActive(false);
-            else current_stage_index++;
+            {
+                foreach (var obj in objects)
+                {
+                    if (obj.is_destroy_object) obj.gameObject.SetActive(false);
+                }
+            }
+            current_stage_index++;
+            objects = stages[current_stage_index].GetComponentsInChildren<StageObject>();
             stages[current_stage_index].SetActive(true);
+            foreach (var obj in objects)
+            {
+                obj.gameObject.SetActive(true);
+            }
             player.gameObject.SetActive(false);
 
             player.transform.position = GameObject.Find("Spawn Point").transform.position;
