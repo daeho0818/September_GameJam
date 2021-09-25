@@ -44,8 +44,8 @@ TextureImporter:
   spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
+  alignment: 9
+  spritePivot: {x: 0.086668886, y: 0.01947855}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
@@ -82,18 +82,18 @@ TextureImporter:
     physicsShape: []
     bones:
     - name: bone_1
-      position: {x: 14.892169, y: 265.44635, z: 0}
-      rotation: {x: 0, y: 0, z: 0.00038602026, w: 0.99999994}
-      length: 10.499644
+      position: {x: 12.353136, y: 265.44635, z: 0}
+      rotation: {x: 0, y: 0, z: 0.00034526698, w: 0.99999994}
+      length: 13.038682
       parentId: -1
     - name: bone_2
-      position: {x: 10.499643, y: -0.00016718647, z: 0}
-      rotation: {x: 0, y: 0, z: 0.009947046, w: 0.9999505}
-      length: 37.690205
+      position: {x: 13.038682, y: -0.0010871885, z: 0}
+      rotation: {x: 0, y: 0, z: 0.009984801, w: 0.9999502}
+      length: 37.690197
       parentId: 0
     - name: bone_3
-      position: {x: 37.6902, y: -0.00014259046, z: 0}
-      rotation: {x: 0, y: 0, z: -0.000551031, w: 0.9999999}
+      position: {x: 37.6902, y: 0.00008517008, z: 0}
+      rotation: {x: 0, y: 0, z: -0.000548035, w: 0.9999999}
       length: 42.564045
       parentId: 1
     spriteID: 5e97eb03825dee720800000000000000
@@ -704,7 +704,7 @@ TextureImporter:
       boneIndex[1]: 0
       boneIndex[2]: 0
       boneIndex[3]: 0
-    - weight[0]: 0.6427233
+    - weight[0]: 0.6427232
       weight[1]: 0.35727677
       weight[2]: 0
       weight[3]: 0

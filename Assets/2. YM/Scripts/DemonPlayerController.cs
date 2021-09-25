@@ -5,21 +5,24 @@ using UnityEngine;
 public class DemonPlayerController : PlayerController
 {
     StoreOrder storeOrder;
-    int myStage;
-    Vector2 startPosition;
-    Quaternion startRotation;
+    public int myStage;
+    public Vector2 startPosition;
+    public Quaternion startRotation;
     void Start()
     {
     }
 
     private void OnEnable()
     {
-        startPosition = transform.position;
-        startRotation = transform.rotation;
-        myStage = 1;
         StoreOrder playerStore = playerMove.storeOrder;
 
         storeOrder = new StoreOrder();
+        if(playerStore == null)
+        {
+            playerMove.storeOrder = new StoreOrder();
+            playerStore = playerMove.storeOrder;
+        }
+        
         Order tempOrder = playerStore.GetOrder(myStage);
         while (tempOrder != null)
         {
@@ -42,17 +45,17 @@ public class DemonPlayerController : PlayerController
             for (int i = 0; i < storeOrder.orders.Count; i++)
             {
                 Order tempOrder = storeOrder.orders[i] as Order;
-                IsJump = tempOrder.orderType == OrderType.jump;
                 for (int j = 0; j <= tempOrder.duration; j++)
                 {
+                    yield return null;
                     if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
                     {
                         Horizontal = tempOrder.h;
                     }
-                    yield return null;
+                    IsJump = tempOrder.orderType == OrderType.jump;
                 }
             }
-        } while (true);
+        } while (storeOrder.orders.Count>0);
         
     }
 }
