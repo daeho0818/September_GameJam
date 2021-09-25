@@ -14,6 +14,5 @@ public class StageObject : MonoBehaviour
 
     void Update()
     {
-        
     }
 }
