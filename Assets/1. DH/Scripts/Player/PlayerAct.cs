@@ -46,6 +46,7 @@ public class PlayerAct : MonoBehaviour
             coroutine = null;
         }
         WindZone = Instantiate(WindZonePrefab, transform.position + Vector3.up / 0.5f, Quaternion.identity, GameManager.Instance.stages[GameManager.Instance.current_stage_index].transform);
+        WindZone.GetComponent<StageObject>().stage_number = GameManager.Instance.current_stage_index + 1;
     }
 
 

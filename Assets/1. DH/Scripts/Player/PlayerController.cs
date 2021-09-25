@@ -19,6 +19,12 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.Instance.stage_clear)
+        {
+            IsJump = false;
+            Horizontal = 0;
+            return;
+        }
         IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
@@ -27,12 +33,7 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Flag"))
         {
             collision.GetComponent<Animator>().SetTrigger("Destroy");
-            Invoke("Clear", 2);
+            GameManager.Instance.stage_clear = true;
         }
-    }
-
-    void Clear()
-    {
-        GameManager.Instance.stage_clear = true;
     }
 }

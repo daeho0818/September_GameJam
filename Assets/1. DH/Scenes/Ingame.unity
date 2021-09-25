@@ -184,6 +184,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.518064, y: 1.6760395}
   m_EdgeRadius: 0
+--- !u!114 &85770961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85770956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66692ea988a57a54ea46f43a0eb23357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  is_destroy_object: 1
+  stage_number: 1
 --- !u!1 &219599299
 GameObject:
   m_ObjectHideFlags: 0
@@ -879,6 +893,7 @@ GameObject:
   - component: {fileID: 954851531}
   - component: {fileID: 954851530}
   - component: {fileID: 954851532}
+  - component: {fileID: 954851533}
   m_Layer: 0
   m_Name: Platform
   m_TagString: Platform
@@ -977,6 +992,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.38, y: 0.88}
   m_EdgeRadius: 0
+--- !u!114 &954851533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 954851529}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66692ea988a57a54ea46f43a0eb23357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  is_destroy_object: 0
+  stage_number: 1
 --- !u!1 &972454064
 GameObject:
   m_ObjectHideFlags: 0
@@ -1551,6 +1580,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1715fe9c975f3c847826a9c8c399409f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  DemonPrefab: {fileID: 3241213095679514334, guid: ddf2fbaff585ecd419a170872dbe3171, type: 3}
   cameraActor: {fileID: 0}
   stages:
   - {fileID: 1865965255}
@@ -1692,6 +1722,7 @@ MonoBehaviour:
   move_max_speed: 5
   moveState: 0
   jump_power: 5
+  isMain: 0
 --- !u!114 &1708766171
 MonoBehaviour:
   m_ObjectHideFlags: 0
