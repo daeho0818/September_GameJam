@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DemonPlayerController : PlayerController
 {
-    StoreOrder storeOrder;
+    public StoreOrder storeOrder;
     public int myStage;
     public Vector2 startPosition;
     public Quaternion startRotation;
@@ -14,20 +14,25 @@ public class DemonPlayerController : PlayerController
 
     private void OnEnable()
     {
-        StoreOrder playerStore = playerMove.storeOrder;
+        StoreOrder playerStore = GameObject.Find("Player").GetComponent<PlayerMove>().storeOrder;
 
-        storeOrder = new StoreOrder();
-        if(playerStore == null)
+        if (storeOrder != null)
         {
-            playerMove.storeOrder = new StoreOrder();
-            playerStore = playerMove.storeOrder;
         }
-        
-        Order tempOrder = playerStore.GetOrder(myStage);
-        while (tempOrder != null)
+        else
         {
-            storeOrder.PutOrder(tempOrder);
-            tempOrder = playerStore.GetOrder(myStage);
+            storeOrder = new StoreOrder();
+            if (playerStore == null)
+            {
+                playerMove.storeOrder = new StoreOrder();
+                playerStore = playerMove.storeOrder;
+            }
+            Order tempOrder = playerStore.GetOrder(myStage);
+            while (tempOrder != null)
+            {
+                storeOrder.PutOrder(tempOrder);
+                tempOrder = playerStore.GetOrder(myStage);
+            }
         }
         StartCoroutine(backOrder());
     }
@@ -38,24 +43,89 @@ public class DemonPlayerController : PlayerController
 
     }
     IEnumerator backOrder()
-    {
-        do {
-            transform.position = startPosition;
-            transform.rotation = startRotation;
-            for (int i = 0; i < storeOrder.orders.Count; i++)
+    {//////////////Á×À¸¸é 0ºÎÅÍ ´Ù½ÃÇÏµµ·Ï
+        if (!isBack&&!playerMove.isMain)
+        {
+            do
             {
-                Order tempOrder = storeOrder.orders[i] as Order;
-                for (int j = 0; j <= tempOrder.duration; j++)
+                transform.position = startPosition;
+                transform.rotation = startRotation;
+                playerAnimation.SetAnimatorState(0);
+                for (int i = 0; i < storeOrder.orders.Count; i++)
                 {
-                    yield return null;
-                    if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
+                    Order tempOrder = storeOrder.orders[i] as Order;
+
+                    transform.position = tempOrder.position;
+                    playerAnimation.SetAnimatorState(tempOrder.animState);
+                    Horizontal = tempOrder.direction;
+                    if (tempOrder.shotWind)
                     {
-                        Horizontal = tempOrder.h;
+                        //¼¦
                     }
-                    IsJump = tempOrder.orderType == OrderType.jump;
+                    yield return new WaitForFixedUpdate();
                 }
+                Horizontal = 0;
+            } while (storeOrder.orders.Count > 0 && !isBack);
+        }
+    }
+    IEnumerator resetBackOrder()
+    {
+        isBack = true;
+        if (playerMove.isMain)
+            playerMove.mycontroller.isBack = true;
+        for (int i = storeOrder.orders.Count-1; i >= 0; i--)
+        {
+            Order tempOrder = storeOrder.orders[i] as Order;
+
+            transform.position = tempOrder.position;
+            playerAnimation.SetAnimatorState(tempOrder.animState);
+            Horizontal = -tempOrder.direction;
+            if (tempOrder.shotWind)
+            {
+                //¼¦
             }
-        } while (storeOrder.orders.Count>0);
+            yield return new WaitForFixedUpdate();
+        }
+
+        Horizontal = 0;
+        if (playerMove.isMain)
+        {
+            GameManager.Instance.LoadPastStage();
+        }
+
+        for (int i = storeOrder.orders.Count - 1; i >= 0; i--)
+        {
+            Order tempOrder = storeOrder.orders[i] as Order;
+
+            transform.position = tempOrder.position;
+            playerAnimation.SetAnimatorState(tempOrder.animState);
+            Horizontal = -tempOrder.direction;
+            if (tempOrder.shotWind)
+            {
+                //¼¦
+            }
+            yield return new WaitForFixedUpdate();
+        }
+
+        if (playerMove.isMain)
+            GameManager.Instance.setControl();
+
+        isBack = false;
+        if (playerMove.isMain)
+            playerMove.mycontroller.isBack = false;
         
+    }
+    private void FixedUpdate()
+    {
+        
+    }
+    public override void OnTriggerEnter2D(Collider2D collision)
+    {
+        
+    }
+    public void resetStart()
+    {
+        StopAllCoroutines();
+        StartCoroutine(resetBackOrder());
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerAct : MonoBehaviour
 {
     public PlayerController controller;
+    public GameObject Mouth;
 
     [Header("바람 관련")]
     [SerializeField] internal float up_power;
@@ -47,31 +48,39 @@ public class PlayerAct : MonoBehaviour
         if (controller.IsWindBlow && !is_wind_blow)
         {
             is_wind_blow = true;
-            if (controller.rigid.velocity.y == 0)
-                controller.playerAnimation.SetAnimatorState(4);
-            Invoke("BlowWind", 0.75f);
+            controller.playerAnimation.SetAnimatorState(4);
         }
-
+        if(controller.playerAnimation.GetAnimatorState() !=4)
+            is_wind_blow = false;
         playerAction.Act(is_wind_zone);
     }
 
     void BlowWind()
     {
-        if (WindZone)
+        
+        WindZone = Instantiate(WindZonePrefab); 
+        WindZone.transform.localPosition = Mouth.transform.position;
+        WindZone.GetComponentInChildren<StageObject>().stage_number = controller.stage_number;
+        Destroy(WindZone, 1);
+    }
+    void endWind()
+    {
+        is_wind_blow = false;
+        if(controller.rigid.velocity.y == 0f)
         {
-            DestroyWind();
+            controller.playerAnimation.SetAnimatorState(0);
         }
-        WindZone = Instantiate(WindZonePrefab, GameObject.Find("WindParent").transform);
-        WindZone.transform.localPosition = Vector2.up;
-        WindZone.GetComponent<StageObject>().stage_number = GameManager.Instance.current_stage_index + 1;
+        else
+        {
+            controller.playerAnimation.SetAnimatorState(2);
 
-        Invoke("DestroyWind", 1);
+        }
     }
 
     void DestroyWind()
     {
-        Destroy(WindZone);
         is_wind_blow = false;
+        Destroy(WindZone);
     }
 
 
@@ -121,6 +130,7 @@ public class WindAct : PlayerAction
     public override void Act(bool isPlay)
     {
         if (!isPlay) return;
+        playerAct.controller.playerAnimation.SetAnimatorState(2);
         if (rigid.transform.position.y > max_pos_y_value)
         {
             if (coroutine == null)

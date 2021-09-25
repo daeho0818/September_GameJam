@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject[] stages;
     [SerializeField] GameObject option;
     [SerializeField] PlayerController player;
+    [SerializeField] DemonPlayerController demonPlayer;
 
     Coroutine coroutine = null;
 
@@ -20,12 +21,15 @@ public class GameManager : MonoBehaviour
     public bool stage_clear = false;
     public bool window_open = false;
 
+    bool stage_reset = false;
+
     private void Awake()
     {
         Instance = this;
     }
     void Start()
     {
+        demonList = new ArrayList();
         stages[0].SetActive(true);
         player.gameObject.SetActive(false);
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
@@ -62,6 +66,7 @@ public class GameManager : MonoBehaviour
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
         }
+        
     }
     void GoToSpawnPoint()
     {
@@ -100,6 +105,7 @@ public class GameManager : MonoBehaviour
             spawnDemon();
 
             player.playerAct.stage_number = current_stage_index + 1;
+            player.playerMove.storeOrder.ResetOrder(current_stage_index+1);
             StartCoroutine(StageAnimation());
         }
         else
@@ -109,7 +115,21 @@ public class GameManager : MonoBehaviour
     }
     public void LoadPastStage()
     {
-
+        for (int i = demonList.Count-1; i >= 0; i--)
+        {
+            var d = demonList[i];
+            var demon = d as GameObject;
+            if (demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
+            {
+                demonPlayer.storeOrder = demon.GetComponent<DemonPlayerController>().storeOrder;
+                demonList.Remove(demon);
+                if (demonList.Count >=2 )
+                {
+                    (demonList[demonList.Count - 2] as GameObject).SetActive(true);
+                }
+                Destroy(demon);
+            }
+        }
         StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
         foreach (var obj in objects)
         {
@@ -127,7 +147,14 @@ public class GameManager : MonoBehaviour
         player.playerAct.stage_number = current_stage_index + 1;
         StartCoroutine(StageAnimation());
     }
+    public void setControl()
+    {
 
+        Time.timeScale = 1;
+
+        player.enabled = true;
+        demonPlayer.enabled = false;
+    }
     IEnumerator StageAnimation()
     {
         SpriteRenderer[] renderers = stages[current_stage_index].GetComponentsInChildren<SpriteRenderer>();
@@ -160,6 +187,7 @@ public class GameManager : MonoBehaviour
     {
         return current_stage_index + 1;
     }
+    ArrayList demonList;
     public void spawnDemon()
     {
         GameObject demon = Instantiate(DemonPrefab);
@@ -168,5 +196,38 @@ public class GameManager : MonoBehaviour
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         dpc.stage_number = current_stage_index;
         demon.SetActive(true);
+        demonList.Add(demon);
+        if (demonList.Count >= 3)
+        {
+            for (int i = 0; i < demonList.Count-2; i++)
+            {
+                (demonList[i] as GameObject).SetActive(false);
+            }
+        }
     }
+    public void onResetButtonClicked()
+    {
+        Time.timeScale = 2;
+        player.enabled = false;
+        demonPlayer.myStage = GetStageIndex();
+        demonPlayer.startPosition = player.transform.position;
+        demonPlayer.startRotation = player.transform.rotation;
+        demonPlayer.enabled = true;
+        stage_reset = true;
+
+        if (stage_reset)
+        {
+            demonPlayer.resetStart();
+            stage_reset = false;
+        }
+
+        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+        foreach (var demon in demons)
+        {
+            demon.GetComponent<DemonPlayerController>().resetStart();
+        }
+
+    }
+
+
 }

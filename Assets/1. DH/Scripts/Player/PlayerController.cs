@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public PlayerAnimation playerAnimation;
 
     public Rigidbody2D rigid;
+    public bool isBack;
 
     public int stage_number;
 
@@ -18,12 +19,13 @@ public class PlayerController : MonoBehaviour
     public float Horizontal { get; set; }
     private void Awake()
     {
-        playerMove = GameObject.Find("Player").GetComponent<PlayerMove>();
         rigid = GetComponent<Rigidbody2D>();
+        isBack = false;
     }
 
     private void Update()
     {
+        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
         if (playerAct.is_wind_blow || GameManager.Instance.stage_clear || GameManager.Instance.window_open)
         {
             IsJump = false;
@@ -31,19 +33,22 @@ public class PlayerController : MonoBehaviour
             return;
         }
         IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
-        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
+       
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    public virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Flag"))
+        if (!isBack)
         {
-            collision.GetComponent<Animator>().SetTrigger("Destroy");
-            GameManager.Instance.stage_clear = true;
-        }
-        else if (collision.CompareTag("Thorn"))
-        {
-            IsDestroy = true;
+            if (collision.CompareTag("Flag"))
+            {
+                collision.GetComponent<Animator>().SetTrigger("Destroy");
+                GameManager.Instance.stage_clear = true;
+            }
+            else if (collision.CompareTag("Thorn"))
+            {
+                IsDestroy = true;
+            }
         }
     }
 }
