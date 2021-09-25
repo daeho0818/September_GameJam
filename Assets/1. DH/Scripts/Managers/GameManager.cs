@@ -63,6 +63,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(StageAnimation());
         }
         else
+
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("Ending");
         }
@@ -96,5 +97,9 @@ public class GameManager : MonoBehaviour
             }
         }
         player.gameObject.SetActive(true);
+    }
+    public int GetStageIndex()
+    {
+        return current_stage_index + 1;
     }
 }

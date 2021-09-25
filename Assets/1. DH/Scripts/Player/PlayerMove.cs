@@ -60,7 +60,8 @@ public class PlayerMove : MonoBehaviour
     {
         float h = controller.Horizontal;
         MoveFunc(h);
-        storeOrder.PutOrder(OrderType.move, 1, Vector2.zero, h);
+        if(isMain)
+        storeOrder.PutOrder(OrderType.move, GameManager.Instance.GetStageIndex(), Vector2.zero, h);
         if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
         else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
@@ -73,7 +74,9 @@ public class PlayerMove : MonoBehaviour
                 if (hit.transform.CompareTag("Platform"))
                 {
                     rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                    storeOrder.PutOrder(OrderType.jump, 1, Vector2.zero, 0);
+
+                    if (isMain)
+                        storeOrder.PutOrder(OrderType.jump, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
                     break;
                 }
             }
