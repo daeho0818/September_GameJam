@@ -74,6 +74,7 @@ public enum OrderType
     jump = 1,
     shot = 2,
     idle = 3,
+    land = 4,
 };
 
 public class Order

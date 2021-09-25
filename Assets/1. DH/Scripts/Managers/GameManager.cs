@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject[] stages;
     [SerializeField] PlayerController player;
+    [SerializeField] DemonPlayerController demonPlayer;
 
     GameObject WindZone = null;
     private int all_stage_count => stages.Length;
@@ -17,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     public bool stage_clear = false;
     public bool stage_start = false;
+
+    bool stage_reset = false;
 
     private void Awake()
     {
@@ -42,6 +45,11 @@ public class GameManager : MonoBehaviour
             // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
             LoadNextStage();
             // StartCoroutine(StartCamAct());
+        }
+        if (stage_reset)
+        {
+            demonPlayer.resetStart();
+            stage_reset = false;
         }
     }
     IEnumerator StartCamAct()
@@ -73,6 +81,7 @@ public class GameManager : MonoBehaviour
 
             stage_clear = false;
 
+            player.playerMove.storeOrder.ResetOrder(current_stage_index + 1);
             StartCoroutine(StageAnimation());
         }
         else
@@ -83,6 +92,20 @@ public class GameManager : MonoBehaviour
     }
     public void LoadPastStage()
     {
+        Time.timeScale = 1;
+
+        player.enabled = true;
+        demonPlayer.enabled = false;
+
+        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+        foreach (var demon in demons)
+        {
+            
+            if(demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
+            {
+                Destroy(demon);
+            }
+        }
         stages[current_stage_index].SetActive(false);
         current_stage_index -= 2;
         LoadNextStage();
@@ -123,4 +146,22 @@ public class GameManager : MonoBehaviour
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         demon.SetActive(true);
     }
+    public void onResetButtonClicked()
+    {
+        Time.timeScale = 2;
+        player.enabled = false;
+        demonPlayer.myStage = current_stage_index + 1;
+        demonPlayer.startPosition = player.transform.position;
+        demonPlayer.startRotation = player.transform.rotation;
+        demonPlayer.enabled = true;
+        demonPlayer.resetStart();
+        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+        foreach (var demon in demons)
+        {
+            demon.GetComponent<DemonPlayerController>().resetStart();
+        }
+
+    }
+
+
 }

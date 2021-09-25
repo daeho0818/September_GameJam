@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
-    public PlayerController controller;
+    PlayerController controller;
+    public PlayerController mycontroller;
+    public DemonPlayerController demonController;
 
     [Header("이동 관련")]
     [SerializeField] float move_speed;
@@ -59,8 +61,15 @@ public class PlayerMove : MonoBehaviour
                 break;
         }
     }
+    bool jumpStart;
     void Update()
     {
+        controller = mycontroller;
+        if (controller.enabled == false)
+        {
+            controller = demonController;
+        }
+
         float h = controller.Horizontal;
         MoveFunc(h);
         if (isMain)
@@ -69,7 +78,10 @@ public class PlayerMove : MonoBehaviour
         {
             if (rigid.velocity.y == 0)
                 controller.playerAnimation.SetAnimatorState(1);
+            if(!controller.isBack)
             transform.localScale = new Vector2(1 * h, 1);
+            if (controller.isBack)
+                transform.localScale = new Vector2(1 * -h, 1);
         }
 
         if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
@@ -81,12 +93,19 @@ public class PlayerMove : MonoBehaviour
         {
             if (hit.transform.CompareTag("Platform"))
             {
+                if (jumpStart)
+                {
+                    jumpStart = false;
+                    if (isMain)
+                        storeOrder.PutOrder(OrderType.land, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
+                }
                 if (controller.IsJump && rigid.velocity.y == 0f)
                 {
                     controller.playerAnimation.SetAnimatorState(2);
                     rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
                     if (isMain)
                         storeOrder.PutOrder(OrderType.jump, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
+                    jumpStart = true;
                     controller.IsJump = false;
                 }
                 else if (!controller.IsJump && rigid.velocity.y == 0)

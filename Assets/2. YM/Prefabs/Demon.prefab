@@ -607,7 +607,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1f5b54d63375744f9e08e585890adad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 3241213095679514335}
+  mycontroller: {fileID: 3241213095679514335}
+  demonController: {fileID: 3241213095679514335}
   move_speed: 10
   move_max_speed: 5
   moveState: 0
@@ -629,6 +630,7 @@ MonoBehaviour:
   playerAct: {fileID: 3241213095679514273}
   playerAnimation: {fileID: 3241213095679514274}
   rigid: {fileID: 3241213095679514277}
+  isBack: 0
   myStage: 0
   startPosition: {x: 0, y: 0}
   startRotation: {x: 0, y: 0, z: 0, w: 0}

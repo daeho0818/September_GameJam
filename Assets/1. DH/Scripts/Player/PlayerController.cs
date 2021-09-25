@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public PlayerAnimation playerAnimation;
 
     public Rigidbody2D rigid;
+    public bool isBack;
 
     public bool IsJump { get; set; }
     public float Horizontal { get; set; }
@@ -16,6 +17,7 @@ public class PlayerController : MonoBehaviour
     {
         playerMove = GameObject.Find("Player").GetComponent<PlayerMove>();
         rigid = GetComponent<Rigidbody2D>();
+        isBack = false;
     }
 
     private void Update()

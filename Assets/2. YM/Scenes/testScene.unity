@@ -1290,6 +1290,7 @@ MonoBehaviour:
   playerAct: {fileID: 845801396}
   playerAnimation: {fileID: 845801395}
   rigid: {fileID: 0}
+  isBack: 0
 --- !u!114 &845801395
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1332,7 +1333,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1f5b54d63375744f9e08e585890adad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 845801394}
+  mycontroller: {fileID: 845801394}
+  demonController: {fileID: 845801400}
   move_speed: 10
   move_max_speed: 5
   moveState: 0
@@ -1385,6 +1387,26 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &845801400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845801393}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a3da2be8fe3dc240a1bbf360c55767e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerMove: {fileID: 845801397}
+  playerAct: {fileID: 845801396}
+  playerAnimation: {fileID: 845801395}
+  rigid: {fileID: 845801399}
+  isBack: 0
+  myStage: 0
+  startPosition: {x: 0, y: 0}
+  startRotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &966881882
 GameObject:
   m_ObjectHideFlags: 0
@@ -1459,7 +1481,7 @@ GameObject:
   - component: {fileID: 1228781880}
   - component: {fileID: 1228781882}
   - component: {fileID: 1228781881}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Flag
   m_TagString: Flag
   m_Icon: {fileID: 0}
@@ -1594,6 +1616,7 @@ MonoBehaviour:
   - {fileID: 482933787}
   - {fileID: 467879581}
   player: {fileID: 845801394}
+  demonPlayer: {fileID: 845801400}
   stage_clear: 0
   stage_start: 0
 --- !u!4 &1553796645
@@ -1621,7 +1644,7 @@ GameObject:
   - component: {fileID: 1591290032}
   - component: {fileID: 1591290034}
   - component: {fileID: 1591290033}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Flag
   m_TagString: Flag
   m_Icon: {fileID: 0}
@@ -1760,7 +1783,7 @@ GameObject:
   - component: {fileID: 1675758089}
   - component: {fileID: 1675758091}
   - component: {fileID: 1675758090}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Flag
   m_TagString: Flag
   m_Icon: {fileID: 0}
@@ -2084,7 +2107,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1553796644}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: LoadPastStage
+        m_MethodName: onResetButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
