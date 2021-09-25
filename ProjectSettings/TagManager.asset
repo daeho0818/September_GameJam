@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Platform
   - WindZone
+  - Flag
   layers:
   - Default
   - TransparentFX
