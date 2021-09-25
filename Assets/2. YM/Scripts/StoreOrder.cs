@@ -33,14 +33,24 @@ public class StoreOrder
 
         orders.Add(order);
     }
-    public Order GetOrder(int stage)
+    public void PutOrder(OrderType orderType, int stage, Vector2 direction, float h)
     {
+        Order order = new Order();
+        order.h = h;
+        order.orderType = orderType;
+        order.duration = 0;
+        order.stage = stage;
+        PutOrder(order);
+    }
+    public Order GetOrder(int stage, bool rv = true)
+    {//Demon Awake에서 자기 stage 오더들을 싹다 추출해가게 하면 될듯
         Order returnOrder = null;
-        for (int i = orders.Count-1; i >= 0; i--)
+        for (int i = 0; i < orders.Count; i++)
         {
             if(((Order)orders[i]).stage == stage)
             {
                 returnOrder = orders[i] as Order;
+                if(rv)
                 orders.Remove(returnOrder);
                 break;
             }
@@ -71,6 +81,7 @@ public class Order
     public OrderType orderType;
     public float h;
     public Vector2 direction;
+    public Vector2 position;
     public int duration;
     public int stage;
 }

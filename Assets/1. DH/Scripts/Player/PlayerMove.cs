@@ -26,14 +26,15 @@ public class PlayerMove : MonoBehaviour
     delegate void Func(float h);
     Func MoveFunc;
 
-    StoreOrder storeOrder;
+    public StoreOrder storeOrder;
+
+    [Header("현재 스테이지 메인캐릭터인가")]
+    public bool isMain = false;
     void Awake()
     {
         storeOrder = new StoreOrder();
-        Backstate = false;
     }
 
-    bool Backstate;
     void Start()
     {
         switch (moveState)
@@ -58,76 +59,41 @@ public class PlayerMove : MonoBehaviour
                 break;
         }
     }
-    IEnumerator backOrder()
-    {
-        Backstate = true;
-        Order tempOrder = storeOrder.GetOrder(1);
-
-        while (tempOrder != null)
-        {
-            for (int i = 0; i < tempOrder.duration; i++)
-            {
-                if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
-                {
-                    MoveFunc(tempOrder.h);
-                }
-                yield return null;
-                Debug.Log(tempOrder.duration);
-            }
-            tempOrder = storeOrder.GetOrder(1);
-        }
-        Backstate = false;
-
-    }
-
     void Update()
     {
-        if (!Backstate)
+        float h = controller.Horizontal;
+        MoveFunc(h);
+        if (isMain)
+            storeOrder.PutOrder(OrderType.move, GameManager.Instance.GetStageIndex(), Vector2.zero, h);
+        if (h != 0)
         {
-            float h = controller.Horizontal;
-            MoveFunc(h);
+            if (rigid.velocity.y == 0)
+                controller.playerAnimation.SetAnimatorState(1);
+            transform.localScale = new Vector2(1 * h, 1);
+        }
 
-            if (h != 0)
+        if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+        else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
+
+        foreach (var hit in hits)
+        {
+            if (hit.transform.CompareTag("Platform"))
             {
-                if (rigid.velocity.y == 0)
-                    controller.playerAnimation.SetAnimatorState(1);
-                transform.localScale = new Vector2(1 * h, 1);
-            }
-
-            if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
-            else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-            Order order = new Order();
-            order.h = h;
-            order.orderType = OrderType.move;
-            order.duration = 0;
-            order.stage = 1;
-            storeOrder.PutOrder(order);
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                StartCoroutine(backOrder());
-            }
-
-
-            hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
-
-            foreach (var hit in hits)
-            {
-                if (hit.transform.CompareTag("Platform"))
+                if (controller.IsJump && rigid.velocity.y == 0f)
                 {
-                    if (controller.IsJump && rigid.velocity.y == 0f)
+                    controller.playerAnimation.SetAnimatorState(2);
+                    rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
+                    if (isMain)
+                        storeOrder.PutOrder(OrderType.jump, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
+                    controller.IsJump = false;
+                }
+                else if (!controller.IsJump && rigid.velocity.y == 0)
+                {
+                    if (h == 0)
                     {
-                        controller.playerAnimation.SetAnimatorState(2);
-                        rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                        controller.IsJump = false;
-                    }
-                    else if (!controller.IsJump && rigid.velocity.y == 0)
-                    {
-                        if (h == 0)
-                        {
-                            controller.playerAnimation.SetAnimatorState(0);
-                        }
+                        controller.playerAnimation.SetAnimatorState(0);
                     }
                 }
             }

@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; } = null;
+    public GameObject DemonPrefab;
     public CameraActor cameraActor;
 
     public GameObject[] stages;
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
     {
         if (stage_clear)
         {
+            spawnDemon();
             // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
             LoadNextStage();
             // StartCoroutine(StartCamAct());
@@ -74,6 +76,7 @@ public class GameManager : MonoBehaviour
             StartCoroutine(StageAnimation());
         }
         else
+
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("Ending");
         }
@@ -107,5 +110,17 @@ public class GameManager : MonoBehaviour
             }
         }
         player.gameObject.SetActive(true);
+    }
+    public int GetStageIndex()
+    {
+        return current_stage_index + 1;
+    }
+    public void spawnDemon()
+    {
+        GameObject demon = Instantiate(DemonPrefab);
+        DemonPlayerController dpc = demon.GetComponent<DemonPlayerController>();
+        dpc.myStage = current_stage_index + 1;
+        dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
+        demon.SetActive(true);
     }
 }

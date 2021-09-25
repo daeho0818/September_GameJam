@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public float Horizontal { get; set; }
     private void Awake()
     {
+        playerMove = GameObject.Find("Player").GetComponent<PlayerMove>();
         rigid = GetComponent<Rigidbody2D>();
     }
 
