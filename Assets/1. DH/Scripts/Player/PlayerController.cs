@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     public PlayerMove playerMove;
     public PlayerAct playerAct;
+    public PlayerAnimation playerAnimation;
 
     public Rigidbody2D rigid;
 

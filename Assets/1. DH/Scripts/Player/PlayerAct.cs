@@ -10,8 +10,12 @@ public class PlayerAct : MonoBehaviour
     [SerializeField] internal float up_power;
     [SerializeField] internal float max_pos_y_value;
     public bool is_wind_zone = false;
+    [SerializeField] GameObject WindZonePrefab;
+    public GameObject WindZone { get; set; } = null;
+    Coroutine coroutine = null;
 
     PlayerAction playerAction;
+
     void Start()
     {
         playerAction = new WindAct(this);
@@ -19,13 +23,37 @@ public class PlayerAct : MonoBehaviour
 
     void Update()
     {
+        if (WindZone)
+        {
+            if (coroutine == null)
+                coroutine = StartCoroutine(ObjectBlink(WindZone.GetComponent<SpriteRenderer>()));
+        }
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            controller.playerAnimation.SetAnimatorState(4);
+            Invoke("BlowWind", 0.75f);
+        }
+
         playerAction.Act(is_wind_zone);
     }
+
+    void BlowWind()
+    {
+        if (WindZone)
+        {
+            Destroy(WindZone);
+            StopCoroutine(coroutine);
+            coroutine = null;
+        }
+        WindZone = Instantiate(WindZonePrefab, transform.position + Vector3.up / 0.5f, Quaternion.identity, GameManager.Instance.stages[GameManager.Instance.current_stage_index].transform);
+    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("WindZone"))
         {
+            controller.playerAnimation.SetAnimatorState(2);
             is_wind_zone = true;
             controller.rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
         }
@@ -36,6 +64,26 @@ public class PlayerAct : MonoBehaviour
         {
             is_wind_zone = false;
             controller.rigid.constraints = RigidbodyConstraints2D.None;
+        }
+    }
+    IEnumerator ObjectBlink(SpriteRenderer renderer)
+    {
+        Color color;
+        while (true)
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                color = renderer.color;
+                renderer.color = Color.Lerp(renderer.color, new Color(color.r, color.g, color.b, 0), 0.1f);
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            for (int i = 0; i < 20; i++)
+            {
+                color = renderer.color;
+                renderer.color = Color.Lerp(renderer.color, new Color(color.r, color.g, color.b, 1), 0.1f);
+                yield return new WaitForSeconds(0.05f);
+            }
         }
     }
 }

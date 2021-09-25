@@ -7,10 +7,12 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; } = null;
     public CameraActor cameraActor;
 
-    [SerializeField] GameObject[] stages;
+    public GameObject[] stages;
     [SerializeField] PlayerController player;
+
+    GameObject WindZone = null;
     private int all_stage_count => stages.Length;
-    private int current_stage_index = 0;
+    public int current_stage_index { get; set; } = 0;
 
     public bool stage_clear = false;
     public bool stage_start = false;
@@ -57,6 +59,15 @@ public class GameManager : MonoBehaviour
             player.gameObject.SetActive(false);
 
             player.transform.position = GameObject.Find("Spawn Point").transform.position;
+
+            WindZone = player.playerAct.WindZone;
+
+            if (WindZone)
+            {
+                WindZone.tag = "WindZone";
+                WindZone.transform.SetParent(stages[current_stage_index].transform);
+                player.playerAct.WindZone = null;
+            }
 
             stage_clear = false;
 
