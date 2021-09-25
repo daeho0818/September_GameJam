@@ -11,7 +11,8 @@ public class GameManager : MonoBehaviour
     public GameObject[] stages;
     [SerializeField] PlayerController player;
 
-    GameObject WindZone = null;
+    Coroutine coroutine = null;
+
     private int all_stage_count => stages.Length;
     public int current_stage_index { get; set; } = 0;
 
@@ -28,6 +29,8 @@ public class GameManager : MonoBehaviour
         player.gameObject.SetActive(false);
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
 
+        player.playerAct.stage_number = 1;
+
         StartCoroutine(StageAnimation());
 
         cameraActor = Camera.main.GetComponent<CameraActor>();
@@ -38,65 +41,81 @@ public class GameManager : MonoBehaviour
     {
         if (stage_clear)
         {
-            spawnDemon();
             // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
-            Invoke("LoadNextStage", 2);
+            if (coroutine == null)
+                coroutine = StartCoroutine(LoadNextStage());
             // StartCoroutine(StartCamAct());
         }
+        else if (player.IsDestroy)
+        {
+            player.IsDestroy = false;
+            // player.playerAnimation.SetAnimatorState(5);
+            Invoke("GoToSpawnPoint", 2);
+        }
     }
-    IEnumerator StartCamAct()
+    void GoToSpawnPoint()
     {
-        yield return StartCoroutine(cameraActor.Zoom(true, player.transform.position + Vector3.up * 2, 3, 1));
-        yield return new WaitForSeconds(1);
-        StartCoroutine(cameraActor.Zoom(false, Vector2.zero, 5, 0.5f));
+        player.transform.position = GameObject.Find("Spawn Point").transform.position;
     }
-    void LoadNextStage()
+    // IEnumerator StartCamAct()
+    // {
+    //     yield return StartCoroutine(cameraActor.Zoom(true, player.transform.position + Vector3.up * 2, 3, 1));
+    //     yield return new WaitForSeconds(1);
+    //     StartCoroutine(cameraActor.Zoom(false, Vector2.zero, 5, 0.5f));
+    // }
+    IEnumerator LoadNextStage()
     {
+        yield return new WaitForSeconds(2);
         if (current_stage_index + 1 < all_stage_count)
         {
-            StageObject[] objects = stages[current_stage_index].GetComponentsInChildren<StageObject>();
             if (current_stage_index >= 0)
             {
+                StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
                 foreach (var obj in objects)
                 {
                     if (obj.is_destroy_object) obj.gameObject.SetActive(false);
                 }
             }
-            current_stage_index++;
-            objects = stages[current_stage_index].GetComponentsInChildren<StageObject>();
-            stages[current_stage_index].SetActive(true);
-            foreach (var obj in objects)
+
+            stages[++current_stage_index].SetActive(true);
+            if (true)
             {
-                obj.gameObject.SetActive(true);
-            }
-            player.gameObject.SetActive(false);
-
-            player.transform.position = GameObject.Find("Spawn Point").transform.position;
-
-            WindZone = player.playerAct.WindZone;
-
-            if (WindZone)
-            {
-                WindZone.tag = "WindZone";
-                WindZone.transform.SetParent(stages[current_stage_index].transform);
-                player.playerAct.WindZone = null;
+                StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+                foreach (var obj in objects)
+                {
+                    obj.gameObject.SetActive(true);
+                }
             }
 
-            stage_clear = false;
+            spawnDemon();
 
+            player.playerAct.stage_number = current_stage_index + 1;
             StartCoroutine(StageAnimation());
         }
         else
-
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene("Ending");
         }
     }
     public void LoadPastStage()
     {
-        stages[current_stage_index].SetActive(false);
-        current_stage_index -= 2;
-        LoadNextStage();
+
+        StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+        foreach (var obj in objects)
+        {
+            obj.gameObject.SetActive(false);
+        }
+
+        stages[current_stage_index--].SetActive(false);
+
+        objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+        foreach (var obj in objects)
+        {
+            obj.gameObject.SetActive(true);
+        }
+
+        player.playerAct.stage_number = current_stage_index + 1;
+        StartCoroutine(StageAnimation());
     }
 
     IEnumerator StageAnimation()
@@ -105,7 +124,8 @@ public class GameManager : MonoBehaviour
         foreach (var renderer in renderers)
         {
             renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0);
-            renderer.transform.Translate(Vector2.down * 5);
+            if (!renderer.CompareTag("Flag"))
+                renderer.transform.Translate(Vector2.down * 5);
         }
 
         foreach (var renderer in renderers)
@@ -116,11 +136,15 @@ public class GameManager : MonoBehaviour
                     break;
 
                 renderer.color += new Color(0, 0, 0, 0.01f);
-                renderer.transform.Translate(Vector2.up * 5 / 100);
+                if (!renderer.CompareTag("Flag"))
+                    renderer.transform.Translate(Vector2.up * 5 / 100);
                 yield return new WaitForSeconds(0.0001f);
             }
         }
+
+        stage_clear = false;
         player.gameObject.SetActive(true);
+        coroutine = null;
     }
     public int GetStageIndex()
     {
@@ -130,8 +154,9 @@ public class GameManager : MonoBehaviour
     {
         GameObject demon = Instantiate(DemonPrefab);
         DemonPlayerController dpc = demon.GetComponent<DemonPlayerController>();
-        dpc.myStage = current_stage_index + 1;
+        dpc.myStage = current_stage_index; // 인덱스를 더한 뒤 불리기 때문에..
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
+        dpc.stage_number = current_stage_index;
         demon.SetActive(true);
     }
 }

@@ -10,7 +10,11 @@ public class PlayerController : MonoBehaviour
 
     public Rigidbody2D rigid;
 
+    public int stage_number;
+
     public bool IsJump { get; set; }
+    public bool IsWindBlow { get; set; }
+    public bool IsDestroy { get; set; }
     public float Horizontal { get; set; }
     private void Awake()
     {
@@ -27,6 +31,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
         IsJump = Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow);
+        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -35,6 +40,10 @@ public class PlayerController : MonoBehaviour
         {
             collision.GetComponent<Animator>().SetTrigger("Destroy");
             GameManager.Instance.stage_clear = true;
+        }
+        else if(collision.CompareTag("Thorn"))
+        {
+            IsDestroy = true;
         }
     }
 }
