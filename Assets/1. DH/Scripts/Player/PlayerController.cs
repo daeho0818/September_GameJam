@@ -24,9 +24,15 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.CompareTag("Flag"))
+        if (collision.CompareTag("Flag"))
         {
-            GameManager.Instance.stage_clear = true;
+            collision.GetComponent<Animator>().SetTrigger("Destroy");
+            Invoke("Clear", 2);
         }
+    }
+
+    void Clear()
+    {
+        GameManager.Instance.stage_clear = true;
     }
 }
