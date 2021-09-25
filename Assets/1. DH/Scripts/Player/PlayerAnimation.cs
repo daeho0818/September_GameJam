@@ -6,7 +6,7 @@ public class PlayerAnimation : MonoBehaviour
 {
     public PlayerController controller;
 
-    Animator animator;
+    public Animator animator;
     void Start()
     {
         animator = GetComponent<Animator>();
@@ -19,5 +19,9 @@ public class PlayerAnimation : MonoBehaviour
     public void SetAnimatorState(int state)
     {
         animator.SetInteger("PlayerState", state);
+    }
+    public int GetAnimatorState()
+    {
+        return animator.GetInteger("PlayerState");
     }
 }

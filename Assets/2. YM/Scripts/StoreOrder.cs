@@ -11,7 +11,7 @@ public class StoreOrder
         orders = new ArrayList();
     }
     public void PutOrder(Order order)
-    {
+    {/*
         if (orders.Count > 0)
         {
         lastOrder = orders[orders.Count-1] as Order;
@@ -29,17 +29,18 @@ public class StoreOrder
                 }
             }
             }
-        }
+        }*/
 
         orders.Add(order);
     }
-    public void PutOrder(OrderType orderType, int stage, Vector2 direction, float h)
+    public void PutOrder(Vector2 position, int animState, int direction,int stage,bool shotWind)
     {
         Order order = new Order();
-        order.h = h;
-        order.orderType = orderType;
-        order.duration = 0;
+        order.position = position;
+        order.animState = animState;
+        order.direction = direction;
         order.stage = stage;
+        order.shotWind = shotWind;
         PutOrder(order);
     }
     public Order GetOrder(int stage, bool rv = true)
@@ -68,21 +69,13 @@ public class StoreOrder
         }
     }
 }
-public enum OrderType
-{
-    move = 0,
-    jump = 1,
-    shot = 2,
-    idle = 3,
-    land = 4,
-};
 
 public class Order
 {
-    public OrderType orderType;
-    public float h;
-    public Vector2 direction;
-    public Vector2 position;
-    public int duration;
     public int stage;
+
+    public Vector2 position;
+    public int animState;
+    public int direction;
+    public bool shotWind;
 }

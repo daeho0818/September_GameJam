@@ -34,17 +34,17 @@ public class PlayerMove : MonoBehaviour
     public bool isMain = false;
     void Awake()
     {
-        storeOrder = new StoreOrder();
     }
 
     void Start()
     {
+        storeOrder = new StoreOrder();
         switch (moveState)
         {
             case MoveState.Smooth:
                 MoveFunc = (h) =>
                 {
-                    rigid.AddForce(Vector2.right * h * Time.deltaTime * move_speed, ForceMode2D.Impulse);
+                    rigid.AddForce(Vector2.right * h * Time.fixedDeltaTime * move_speed, ForceMode2D.Impulse);
                     if (rigid.velocity.x > move_max_speed)
                         rigid.velocity = new Vector2(move_max_speed, rigid.velocity.y);
                     else if (rigid.velocity.x < move_max_speed * -1)
@@ -54,7 +54,7 @@ public class PlayerMove : MonoBehaviour
             case MoveState.Not:
                 MoveFunc = (h) =>
                 {
-                    transform.Translate(Vector2.right * h * Time.deltaTime * move_speed);
+                    transform.Translate(Vector2.right * h * Time.fixedDeltaTime * move_speed);
                 };
                 break;
             default:
@@ -62,6 +62,19 @@ public class PlayerMove : MonoBehaviour
         }
     }
     bool jumpStart;
+    bool firstFrame = true;
+    private void FixedUpdate()
+    {
+        if (firstFrame)
+        {
+            firstFrame = false;
+            return;
+        }
+        if (isMain)
+        {
+            storeOrder.PutOrder(transform.position, controller.playerAnimation.GetAnimatorState(), (int)transform.localScale.x, GameManager.Instance.GetStageIndex(), false);
+        }
+    }
     void Update()
     {
         controller = mycontroller;
@@ -71,51 +84,50 @@ public class PlayerMove : MonoBehaviour
         }
 
         float h = controller.Horizontal;
+        if(isMain)
         MoveFunc(h);
-        if (isMain)
-            storeOrder.PutOrder(OrderType.move, GameManager.Instance.GetStageIndex(), Vector2.zero, h);
+        
         if (h != 0)
         {
-            if (rigid.velocity.y == 0)
-                controller.playerAnimation.SetAnimatorState(1);
-            if(!controller.isBack)
-            transform.localScale = new Vector2(1 * h, 1);
+
+            if (!controller.isBack)
+                transform.localScale = new Vector2(1 * h, 1);
             if (controller.isBack)
                 transform.localScale = new Vector2(1 * -h, 1);
+
+            if (rigid.velocity.y == 0)
+                controller.playerAnimation.SetAnimatorState(1);
         }
+
 
         if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
         else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
-
-        foreach (var hit in hits)
-        {
-            if (hit.transform.CompareTag("Platform"))
+        if (isMain)
+            foreach (var hit in hits)
             {
-                if (jumpStart)
+                if (hit.transform.CompareTag("Platform"))
                 {
-                    jumpStart = false;
-                    if (isMain)
-                        storeOrder.PutOrder(OrderType.land, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
-                }
-                if (controller.IsJump && rigid.velocity.y == 0f)
-                {
-                    controller.playerAnimation.SetAnimatorState(2);
-                    rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                    if (isMain)
-                        storeOrder.PutOrder(OrderType.jump, GameManager.Instance.GetStageIndex(), Vector2.zero, 0);
-                    jumpStart = true;
-                    controller.IsJump = false;
-                }
-                else if (!controller.IsJump && rigid.velocity.y == 0)
-                {
-                    if (h == 0)
+                    if (jumpStart)
                     {
-                        controller.playerAnimation.SetAnimatorState(0);
+                        jumpStart = false;
+                    }
+                    if (controller.IsJump && rigid.velocity.y == 0f)
+                    {
+                        controller.playerAnimation.SetAnimatorState(2);
+                        rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
+                        jumpStart = true;
+                        controller.IsJump = false;
+                    }
+                    else if (!controller.IsJump && rigid.velocity.y == 0)
+                    {
+                        if (h == 0)
+                        {
+                            controller.playerAnimation.SetAnimatorState(0);
+                        }
                     }
                 }
             }
-        }
     }
 }

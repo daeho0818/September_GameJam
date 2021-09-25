@@ -9,6 +9,27 @@ public class PlayerAct : MonoBehaviour
     [Header("바람 관련")]
     [SerializeField] internal float up_power;
     [SerializeField] internal float max_pos_y_value;
+    public int stage_number
+    {
+        get
+        {
+            DemonPlayerController DC = GetComponent<DemonPlayerController>();
+            if (DC)
+            {
+                return DC.stage_number;
+            }
+            return controller.stage_number;
+        }
+        set
+        {
+            DemonPlayerController DC = GetComponent<DemonPlayerController>();
+            if (DC)
+            {
+                DC.stage_number = value;
+            }
+            controller.stage_number = value;
+        }
+    }
     public bool is_wind_zone = false;
     [SerializeField] GameObject WindZonePrefab;
     public GameObject WindZone { get; set; } = null;
@@ -28,7 +49,7 @@ public class PlayerAct : MonoBehaviour
             if (coroutine == null)
                 coroutine = StartCoroutine(ObjectBlink(WindZone.GetComponent<SpriteRenderer>()));
         }
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (controller.IsWindBlow)
         {
             controller.playerAnimation.SetAnimatorState(4);
             Invoke("BlowWind", 0.75f);
@@ -41,11 +62,19 @@ public class PlayerAct : MonoBehaviour
     {
         if (WindZone)
         {
-            Destroy(WindZone);
-            StopCoroutine(coroutine);
-            coroutine = null;
+            DestroyWind();
         }
         WindZone = Instantiate(WindZonePrefab, transform.position + Vector3.up / 0.5f, Quaternion.identity, GameManager.Instance.stages[GameManager.Instance.current_stage_index].transform);
+        WindZone.GetComponent<StageObject>().stage_number = GameManager.Instance.current_stage_index + 1;
+
+        Invoke("DestroyWind", 1);
+    }
+
+    void DestroyWind()
+    {
+        Destroy(WindZone);
+        StopCoroutine(coroutine);
+        coroutine = null;
     }
 
 
@@ -53,17 +82,24 @@ public class PlayerAct : MonoBehaviour
     {
         if (collision.CompareTag("WindZone"))
         {
-            controller.playerAnimation.SetAnimatorState(2);
-            is_wind_zone = true;
-            controller.rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+            if (stage_number == collision.GetComponent<StageObject>().stage_number + 1)
+            {
+                Debug.Log("응애 제발...");
+                controller.playerAnimation.SetAnimatorState(2);
+                is_wind_zone = true;
+                controller.rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+            }
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("WindZone"))
         {
-            is_wind_zone = false;
-            controller.rigid.constraints = RigidbodyConstraints2D.None;
+            if (stage_number == collision.GetComponent<StageObject>().stage_number + 1)
+            {
+                is_wind_zone = false;
+                controller.rigid.constraints = RigidbodyConstraints2D.None;
+            }
         }
     }
     IEnumerator ObjectBlink(SpriteRenderer renderer)

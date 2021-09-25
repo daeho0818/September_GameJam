@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DemonPlayerController : PlayerController
 {
-    StoreOrder storeOrder;
+    public StoreOrder storeOrder;
     public int myStage;
     public Vector2 startPosition;
     public Quaternion startRotation;
@@ -22,7 +22,6 @@ public class DemonPlayerController : PlayerController
             playerMove.storeOrder = new StoreOrder();
             playerStore = playerMove.storeOrder;
         }
-        
         Order tempOrder = playerStore.GetOrder(myStage);
         while (tempOrder != null)
         {
@@ -39,48 +38,79 @@ public class DemonPlayerController : PlayerController
     }
     IEnumerator backOrder()
     {//////////////Á×À¸¸é 0ºÎÅÍ ´Ù½ÃÇÏµµ·Ï
-        do {
+        do
+        {
             transform.position = startPosition;
             transform.rotation = startRotation;
+            playerAnimation.SetAnimatorState(0);
             for (int i = 0; i < storeOrder.orders.Count; i++)
             {
                 Order tempOrder = storeOrder.orders[i] as Order;
-                if (tempOrder.orderType == OrderType.land)
-                    continue;
-                for (int j = 0; j <= tempOrder.duration; j++)
+
+                transform.position = tempOrder.position;
+                playerAnimation.SetAnimatorState(tempOrder.animState);
+                Horizontal = tempOrder.direction;
+                if (tempOrder.shotWind)
                 {
-                    yield return null;
-                    if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
-                    {
-                        Horizontal = tempOrder.h;
-                    }
-                    IsJump = tempOrder.orderType == OrderType.jump;
+                    //¼¦
                 }
+                yield return new WaitForFixedUpdate();
             }
-        } while (storeOrder.orders.Count>0);
+            Horizontal = 0;
+        } while (storeOrder.orders.Count>0&&!isBack);
         
     }
     IEnumerator resetBackOrder()
     {
         isBack = true;
-            for (int i = storeOrder.orders.Count-1; i >= 0; i--)
+        if (playerMove.isMain)
+            playerMove.mycontroller.isBack = true;
+        for (int i = storeOrder.orders.Count-1; i >= 0; i--)
+        {
+            Order tempOrder = storeOrder.orders[i] as Order;
+
+            transform.position = tempOrder.position;
+            playerAnimation.SetAnimatorState(tempOrder.animState);
+            Horizontal = -tempOrder.direction;
+            if (tempOrder.shotWind)
             {
-                Order tempOrder = storeOrder.orders[i] as Order;
-                if (tempOrder.orderType == OrderType.jump)
-                    continue;
-                for (int j = 0; j <= tempOrder.duration/2; j++)
-                {
-                    yield return null;
-                    if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
-                    {
-                        Horizontal = tempOrder.h*-1;
-                    }
-                    IsJump = tempOrder.orderType == OrderType.land;
-                }
+                //¼¦
             }
+            yield return new WaitForFixedUpdate();
+        }
+
         Horizontal = 0;
-        IsJump = false;
-        GameManager.Instance.LoadPastStage();
+        if (playerMove.isMain)
+            GameManager.Instance.LoadPastStage();
+
+        for (int i = storeOrder.orders.Count - 1; i >= 0; i--)
+        {
+            Order tempOrder = storeOrder.orders[i] as Order;
+
+            transform.position = tempOrder.position;
+            playerAnimation.SetAnimatorState(tempOrder.animState);
+            Horizontal = -tempOrder.direction;
+            if (tempOrder.shotWind)
+            {
+                //¼¦
+            }
+            yield return new WaitForFixedUpdate();
+        }
+
+        if (playerMove.isMain)
+            GameManager.Instance.setControl();
+
+        isBack = false;
+        if (playerMove.isMain)
+            playerMove.mycontroller.isBack = false;
+    }
+    private void FixedUpdate()
+    {
+        
+    }
+    public override void OnTriggerEnter2D(Collider2D collision)
+    {
+        
     }
     public void resetStart()
     {

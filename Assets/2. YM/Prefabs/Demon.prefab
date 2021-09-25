@@ -578,6 +578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controller: {fileID: 3241213095679514335}
+  animator: {fileID: 9057815782421247748}
 --- !u!114 &3241213095679514273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -631,6 +632,7 @@ MonoBehaviour:
   playerAnimation: {fileID: 3241213095679514274}
   rigid: {fileID: 3241213095679514277}
   isBack: 0
+  stage_number: 0
   myStage: 0
   startPosition: {x: 0, y: 0}
   startRotation: {x: 0, y: 0, z: 0, w: 0}

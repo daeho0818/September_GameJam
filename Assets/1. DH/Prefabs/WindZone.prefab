@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 1215666786017015153}
   - component: {fileID: 1215666786017015152}
   - component: {fileID: 1215666786017015150}
-  m_Layer: 9
+  - component: {fileID: 125989235627479858}
+  m_Layer: 0
   m_Name: WindZone
   m_TagString: WindZone
   m_Icon: {fileID: 0}
@@ -109,3 +110,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &125989235627479858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1215666786017015155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 66692ea988a57a54ea46f43a0eb23357, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  childObjects: []
+  is_destroy_object: 0
+  stage_number: 0
