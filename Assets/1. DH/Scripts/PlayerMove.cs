@@ -25,15 +25,13 @@ public class PlayerMove : MonoBehaviour
 
     delegate void Func(float h);
     Func MoveFunc;
-
-    StoreOrder storeOrder;
+    public StoreOrder storeOrder;
+    [Header("현재 스테이지 메인캐릭터인가")]
+    public bool isMain = false;
     void Awake()
     {
         storeOrder = new StoreOrder();
-        Backstate = false;
     }
-
-    bool Backstate;
     void Start()
     {
         switch (moveState)
@@ -58,62 +56,25 @@ public class PlayerMove : MonoBehaviour
                 break;
         }
     }
-    IEnumerator backOrder()
-    {
-        Backstate = true;
-        Order tempOrder = storeOrder.GetOrder(1);
-
-        while (tempOrder != null)
-        {
-            for (int i = 0; i < tempOrder.duration; i++)
-            {
-                if (tempOrder.orderType == OrderType.move || tempOrder.orderType == OrderType.idle)
-                {
-                    MoveFunc(tempOrder.h);
-                }
-                yield return null;
-                Debug.Log(tempOrder.duration);
-            }
-            tempOrder = storeOrder.GetOrder(1);
-        }
-        Backstate = false;
-
-    }
-
     void Update()
     {
-        if (!Backstate)
+        float h = controller.Horizontal;
+        MoveFunc(h);
+        storeOrder.PutOrder(OrderType.move, 1, Vector2.zero, h);
+        if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+        else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        if (controller.IsJump)
         {
-            float h = controller.Horizontal;
-            MoveFunc(h);
+            hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
 
-            if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
-            else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
-
-            Order order = new Order();
-            order.h = h;
-            order.orderType = OrderType.move;
-            order.duration = 0;
-            order.stage = 1;
-            storeOrder.PutOrder(order);
-
-            if (Input.GetKeyDown(KeyCode.Space))
+            foreach (var hit in hits)
             {
-                StartCoroutine(backOrder());
-            }
-
-
-            if (controller.IsJump)
-            {
-                hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
-
-                foreach (var hit in hits)
+                if (hit.transform.CompareTag("Platform"))
                 {
-                    if (hit.transform.CompareTag("Platform"))
-                    {
-                        rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
-                        break;
-                    }
+                    rigid.AddForce(Vector2.up * jump_power, ForceMode2D.Impulse);
+                    storeOrder.PutOrder(OrderType.jump, 1, Vector2.zero, 0);
+                    break;
                 }
             }
         }
