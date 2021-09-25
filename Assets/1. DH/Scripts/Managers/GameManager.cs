@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject demon = Instantiate(DemonPrefab);
         DemonPlayerController dpc = demon.GetComponent<DemonPlayerController>();
-        dpc.myStage = current_stage_index+1;
+        dpc.myStage = current_stage_index + 1;
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         demon.SetActive(true);
     }
