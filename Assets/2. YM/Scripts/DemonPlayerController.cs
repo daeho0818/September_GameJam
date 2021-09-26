@@ -79,6 +79,7 @@ public class DemonPlayerController : PlayerController
     int frameIndex = -1;
     IEnumerator backOrder()
     {
+        isBack = false;
         if (!isBack&&!playerMove.isMain)
         {
             do
@@ -155,9 +156,10 @@ public class DemonPlayerController : PlayerController
         {
             GameManager.Instance.setControl();
             GameManager.Instance.demonGO();
+            GameManager.Instance.demonReady(2);
 
             playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex()+1);
-            //playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex());
+            playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex());
         }
     }
     private void FixedUpdate()

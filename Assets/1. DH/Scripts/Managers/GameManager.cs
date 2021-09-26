@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
     }
-    public void demonReady()
+    public void demonReady(int power = 1)
     {
-        readyDemonCount++;
+        readyDemonCount+=power;
         if (readyDemonCount > 1||demonList.Count<=1)
         {
             GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
