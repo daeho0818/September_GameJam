@@ -23,4 +23,8 @@ public class PlayerAnimation : MonoBehaviour
     {
         return animator.GetInteger("PlayerState");
     }
+    public void SetAnimatorTrigger(string s)
+    {
+        animator.SetTrigger(s);
+    }
 }

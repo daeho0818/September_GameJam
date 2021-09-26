@@ -36,18 +36,35 @@ public class PlayerController : MonoBehaviour
        
         Horizontal = Input.GetAxisRaw("Horizontal");
     }
+    void dieAnimEnd()
+    {
+        gameObject.SetActive(false);
+    }
+    public GameObject dieParticle;
     public virtual void OnTriggerEnter2D(Collider2D collision)
     {
         if (!isBack)
         {
             if (collision.CompareTag("Flag"))
             {
+                rigid.velocity = new Vector2(0,rigid.velocity.y);
                 collision.GetComponent<Animator>().SetTrigger("Destroy");
                 GameManager.Instance.stage_clear = true;
             }
             else if (collision.CompareTag("Thorn"))
             {
+                playerAnimation.SetAnimatorTrigger("Die");
+                GameObject g = Instantiate(dieParticle);
+                g.transform.position = transform.position;
                 IsDestroy = true;
+            }
+            else if (collision.CompareTag("Ghost"))
+            {
+                playerAnimation.SetAnimatorTrigger("Die");
+                GameObject g = Instantiate(dieParticle);
+                g.transform.position = transform.position;
+                IsDestroy = true;
+                collision.GetComponent<GhostScript>().Init();
             }
         }
     }
