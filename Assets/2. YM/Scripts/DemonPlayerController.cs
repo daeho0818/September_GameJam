@@ -8,8 +8,23 @@ public class DemonPlayerController : PlayerController
     public int myStage;
     public Vector2 startPosition;
     public Quaternion startRotation;
+    SpriteRenderer[] sr;
     void Start()
     {
+        sr = GetComponentsInChildren < SpriteRenderer >();
+    }
+    public void setAlpha(float a)
+    {
+        if (sr == null)
+        {
+            sr = GetComponentsInChildren<SpriteRenderer>();
+        }
+        for (int i = 0; i < sr.Length; i++)
+        {
+            Color c = sr[i].color;
+            c.a = a;
+            sr[i].color = c;
+        }
     }
 
     private void OnEnable()
@@ -21,19 +36,37 @@ public class DemonPlayerController : PlayerController
         }
         else
         {
+
             storeOrder = new StoreOrder();
             if (playerStore == null)
             {
                 playerMove.storeOrder = new StoreOrder();
                 playerStore = playerMove.storeOrder;
             }
-            Order tempOrder = playerStore.GetOrder(myStage);
-            while (tempOrder != null)
+            ArrayList orders = new ArrayList();
+            playerStore.GetOrderAll(myStage-1,ref orders);
+
+            if (orders.Count > 0)
             {
-                storeOrder.PutOrder(tempOrder);
-                tempOrder = playerStore.GetOrder(myStage);
+                for (int i = 0; i < orders.Count; i++)
+                {
+                    storeOrder.PutOrder(orders[i] as Order);
+                }
             }
+            orders = new ArrayList();
+            playerStore.GetOrderAll(myStage, ref orders);
+            if (orders.Count > 0)
+            {
+                for (int i = 0; i < orders.Count; i++)
+                {
+                    storeOrder.PutOrder(orders[i] as Order);
+                }
+            }
+
+            
         }
+        if (playerMove.isMain)
+            storeOrder = playerStore;
         StartCoroutine(backOrder());
     }
 
@@ -42,78 +75,90 @@ public class DemonPlayerController : PlayerController
     {
 
     }
+    bool isReady = true;
+    int frameIndex = -1;
     IEnumerator backOrder()
-    {//////////////Á×À¸¸é 0ºÎÅÍ ´Ù½ÃÇÏµµ·Ï
+    {
         if (!isBack&&!playerMove.isMain)
         {
             do
             {
-                transform.position = startPosition;
-                transform.rotation = startRotation;
-                playerAnimation.SetAnimatorState(0);
-                for (int i = 0; i < storeOrder.orders.Count; i++)
+                if (isReady)
                 {
-                    Order tempOrder = storeOrder.orders[i] as Order;
-
-                    transform.position = tempOrder.position;
-                    playerAnimation.SetAnimatorState(tempOrder.animState);
-                    Horizontal = tempOrder.direction;
-                    if (tempOrder.shotWind)
+                    transform.position = startPosition;
+                    transform.rotation = startRotation;
+                    playerAnimation.SetAnimatorState(0);
+                    for (int i = 0; i < storeOrder.orders.Count; i++)
                     {
-                        //¼¦
+                        Order tempOrder = storeOrder.orders[i] as Order;
+                        if (tempOrder.stage == myStage)
+                        {
+                            transform.position = tempOrder.position;
+                            playerAnimation.SetAnimatorState(tempOrder.animState);
+                            Horizontal = tempOrder.direction;
+                            if (tempOrder.shotWind)
+                            {
+                                //¼¦
+                            }
+                        }
+                        else
+                            continue;
+                        frameIndex = i;
+                        yield return new WaitForFixedUpdate();
                     }
-                    yield return new WaitForFixedUpdate();
+                    Horizontal = 0;
+                    isReady = false;
+                    GameManager.Instance.demonReady();
                 }
-                Horizontal = 0;
+                else
+                {
+                    yield return null;
+                    if (GameManager.Instance.demonList.Count <= 1)
+                        ready();
+                }
             } while (storeOrder.orders.Count > 0 && !isBack);
         }
     }
     IEnumerator resetBackOrder()
     {
         isBack = true;
+        float myDuration = 3f;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = true;
-        for (int i = storeOrder.orders.Count-1; i >= 0; i--)
+        bool isChaged = false;
+        for (int i = frameIndex!=-1 ? frameIndex:storeOrder.orders.Count-1; i >= 0; i-=(int)((storeOrder.orders.Count)/(myDuration/Time.fixedDeltaTime)))
         {
-            Order tempOrder = storeOrder.orders[i] as Order;
 
+            Order tempOrder = storeOrder.orders[i] as Order;
+            if(!isChaged&& playerMove.isMain&&tempOrder.stage == GameManager.Instance.GetStageIndex()-1)
+            {
+                    isChaged = true;
+                    GameManager.Instance.LoadPastStage();
+            }
+            if (isChaged&&playerMove.isMain && tempOrder.stage == GameManager.Instance.GetStageIndex() - 1)
+            {
+                break;
+            }
             transform.position = tempOrder.position;
             playerAnimation.SetAnimatorState(tempOrder.animState);
             Horizontal = -tempOrder.direction;
-            if (tempOrder.shotWind)
-            {
-                //¼¦
-            }
             yield return new WaitForFixedUpdate();
+
         }
 
         Horizontal = 0;
-        if (playerMove.isMain)
-        {
-            GameManager.Instance.LoadPastStage();
-        }
-
-        for (int i = storeOrder.orders.Count - 1; i >= 0; i--)
-        {
-            Order tempOrder = storeOrder.orders[i] as Order;
-
-            transform.position = tempOrder.position;
-            playerAnimation.SetAnimatorState(tempOrder.animState);
-            Horizontal = -tempOrder.direction;
-            if (tempOrder.shotWind)
-            {
-                //¼¦
-            }
-            yield return new WaitForFixedUpdate();
-        }
-
-        if (playerMove.isMain)
-            GameManager.Instance.setControl();
-
         isBack = false;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = false;
-        
+
+        if (playerMove.isMain)
+        {
+            GameManager.Instance.setControl();
+            GameManager.Instance.demonGO();
+
+            playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex()+1);
+            playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex());
+        }
     }
     private void FixedUpdate()
     {
@@ -122,6 +167,16 @@ public class DemonPlayerController : PlayerController
     public override void OnTriggerEnter2D(Collider2D collision)
     {
         
+    }
+    public void ready()
+    {
+        isReady = true;
+    }
+    public void gogo()
+    {
+        isBack = false;
+        StopAllCoroutines();
+        StartCoroutine(backOrder());
     }
     public void resetStart()
     {

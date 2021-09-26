@@ -22,10 +22,23 @@ public class GameManager : MonoBehaviour
     public bool window_open = false;
 
     bool stage_reset = false;
-
+    int readyDemonCount = 0;
     private void Awake()
     {
         Instance = this;
+    }
+    public void demonReady()
+    {
+        readyDemonCount++;
+        if (readyDemonCount > 1||demonList.Count<=1)
+        {
+            GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+            foreach (var demon in demons)
+            {
+                demon.GetComponent<DemonPlayerController>().ready();
+            }
+            readyDemonCount = 0;
+        }
     }
     void Start()
     {
@@ -71,6 +84,7 @@ public class GameManager : MonoBehaviour
     void GoToSpawnPoint()
     {
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
+        player.playerMove.storeOrder.ResetOrder(GetStageIndex());
     }
     // IEnumerator StartCamAct()
     // {
@@ -110,27 +124,37 @@ public class GameManager : MonoBehaviour
             var demon = d as GameObject;
             if (demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
             {
-                demonPlayer.storeOrder = demon.GetComponent<DemonPlayerController>().storeOrder;
                 demonList.Remove(demon);
                 if (demonList.Count >= 2)
                 {
                     (demonList[demonList.Count - 2] as GameObject).SetActive(true);
+                    (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.3f);
                 }
                 Destroy(demon);
             }
         }
+        if (demonList.Count > 0)
+            (demonList[demonList.Count - 1] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.6f);
+
         //지금스테이지 삭제
         StartCoroutine(StageExitAnimation(current_stage_index, true));
         current_stage_index--;
 
 
         player.playerAct.stage_number = current_stage_index + 1;
+
         StartCoroutine(StageAnimation());
+    }
+    public void demonGO()
+    {
+        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+        foreach (var demon in demons)
+        {
+            demon.GetComponent<DemonPlayerController>().gogo();
+        }
     }
     public void setControl()
     {
-
-        Time.timeScale = 1;
 
         player.enabled = true;
         demonPlayer.enabled = false;
@@ -165,7 +189,7 @@ public class GameManager : MonoBehaviour
     {
         return current_stage_index + 1;
     }
-    ArrayList demonList;
+    public ArrayList demonList;
     public void spawnDemon()
     {
         GameObject demon = Instantiate(DemonPrefab);
@@ -173,8 +197,14 @@ public class GameManager : MonoBehaviour
         dpc.myStage = current_stage_index; // 인덱스를 더한 뒤 불리기 때문에..
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         dpc.stage_number = current_stage_index;
+        dpc.setAlpha(0.6f);
         demon.SetActive(true);
         demonList.Add(demon);
+
+        if (demonList.Count>=2)
+        {
+            (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.3f);
+        }
         if (demonList.Count >= 3)
         {
             for (int i = 0; i < demonList.Count - 2; i++)
@@ -185,7 +215,6 @@ public class GameManager : MonoBehaviour
     }
     public void onResetButtonClicked()
     {
-        Time.timeScale = 2;
         player.enabled = false;
         demonPlayer.myStage = GetStageIndex();
         demonPlayer.startPosition = player.transform.position;
