@@ -157,7 +157,7 @@ public class DemonPlayerController : PlayerController
             GameManager.Instance.demonGO();
 
             playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex()+1);
-            playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex());
+            //playerMove.storeOrder.ResetOrder(GameManager.Instance.GetStageIndex());
         }
     }
     private void FixedUpdate()
