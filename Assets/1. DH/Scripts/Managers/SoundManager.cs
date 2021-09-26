@@ -5,8 +5,12 @@ using UnityEngine;
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance { get; private set; } = null;
-    public AudioClip stage_clear;
-
+    public AudioClip landSound;
+    public AudioClip winSound;
+    public AudioClip pauseSound;
+    public AudioClip rewindSound;
+    public AudioClip objectSpawnSound;
+    public AudioClip mainTheme;
     [SerializeField] AudioSource musicSource;
     [SerializeField] AudioSource sfxSource;
 
@@ -14,7 +18,7 @@ public class SoundManager : MonoBehaviour
     {
         Instance = this;
     }
-    public void PlayMusic(AudioClip music, float volume = 0.5f)
+    public void PlayMusic(AudioClip music, float volume = 1f)
     {
 
         if (music != null)
@@ -32,7 +36,12 @@ public class SoundManager : MonoBehaviour
     }
     public void PlaySound(AudioClip sound)
     {
-        PlaySound(sound, 1f);
+        if (sound == landSound)
+            PlaySound(sound, 0.4f);
+        else if (sound == rewindSound)
+            PlaySound(sound, 0.6f);
+        else
+            PlaySound(sound, 1f);
     }
     public void PlaySound(AudioClip sound, float volume)
     {

@@ -50,6 +50,7 @@ public class PlayerController : MonoBehaviour
                 rigid.velocity = new Vector2(0,rigid.velocity.y);
                 collision.GetComponent<Animator>().SetTrigger("Destroy");
                 GameManager.Instance.stage_clear = true;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.winSound);
             }
             else if (collision.CompareTag("Thorn"))
             {
