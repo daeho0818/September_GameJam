@@ -61,7 +61,7 @@ public class PlayerAct : MonoBehaviour
         WindZone = Instantiate(WindZonePrefab); 
         WindZone.transform.localPosition = Mouth.transform.position;
         WindZone.GetComponentInChildren<StageObject>().stage_number = controller.stage_number;
-        Destroy(WindZone, 1);
+        Destroy(WindZone, 1.75f);
     }
     void endWind()
     {
