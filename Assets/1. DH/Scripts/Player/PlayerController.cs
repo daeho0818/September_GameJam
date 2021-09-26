@@ -44,6 +44,7 @@ public class PlayerController : MonoBehaviour
             {
                 collision.GetComponent<Animator>().SetTrigger("Destroy");
                 GameManager.Instance.stage_clear = true;
+                SoundManager.Instance.PlaySound(SoundManager.Instance.winSound);
             }
             else if (collision.CompareTag("Thorn"))
             {

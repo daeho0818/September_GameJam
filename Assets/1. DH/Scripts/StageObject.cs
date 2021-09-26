@@ -42,6 +42,7 @@ public class StageObject : MonoBehaviour
         if (spriteRenderer != null)
             spriteRenderer.color = new Color(1, 1, 1, 0);
         transform.position = originalPos - effectVector;
+        SoundManager.Instance.PlaySound(SoundManager.Instance.objectSpawnSound, 0.2f);
         while (eTime < duration)
         {
             transform.position = Vector3.Lerp(originalPos - effectVector, originalPos, eTime/ duration);

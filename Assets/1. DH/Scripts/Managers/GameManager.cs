@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
     // }
     IEnumerator LoadNextStage()
     {
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(0.5f);
         if (current_stage_index + 1 < all_stage_count)
         {
             if (current_stage_index >= 0)
