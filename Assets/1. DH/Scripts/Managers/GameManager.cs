@@ -210,10 +210,11 @@ public class GameManager : MonoBehaviour
     IEnumerator StageExitAnimation(int current_stage_index, bool isMustDestroy)
     {
         StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+
         foreach (var obj in objects)
         {
             StartCoroutine(obj.DestroyEffect(isMustDestroy));
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
         yield return new WaitForSeconds(0.2f);
         if (isMustDestroy)
