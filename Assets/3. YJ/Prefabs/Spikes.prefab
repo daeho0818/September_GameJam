@@ -123,5 +123,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   childObjects: []
-  is_destroy_object: 1
+  is_destroy_object: 0
   stage_number: 1

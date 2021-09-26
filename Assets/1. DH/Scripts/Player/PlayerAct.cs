@@ -141,7 +141,7 @@ public class WindAct : PlayerAction
         }
         else
         {
-            rigid.AddForce(Vector2.up * up_power);
+            rigid.velocity = new Vector2(rigid.velocity.x,(up_power));
         }
     }
     IEnumerator SetPosition()

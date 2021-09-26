@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        IsWindBlow = Input.GetKeyDown(KeyCode.Return);
+        IsWindBlow = Input.GetKeyDown(KeyCode.C);
         if (playerAct.is_wind_blow || GameManager.Instance.stage_clear || GameManager.Instance.window_open)
         {
             IsJump = false;
