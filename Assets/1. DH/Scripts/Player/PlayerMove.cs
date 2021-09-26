@@ -100,7 +100,7 @@ public class PlayerMove : MonoBehaviour
         }
 
 
-        if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX;
+        if (controller.playerAct.is_wind_zone && h == 0) rigid.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         else rigid.constraints = RigidbodyConstraints2D.FreezeRotation;
 
         hits = Physics2D.RaycastAll(transform.position, Vector2.down, 0.6f);
