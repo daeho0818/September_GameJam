@@ -135,20 +135,18 @@ public class GameManager : MonoBehaviour
             var demon = d as GameObject;
             if (demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
             {
-                demonPlayer.storeOrder = demon.GetComponent<DemonPlayerController>().storeOrder;
                 demonList.Remove(demon);
                 if (demonList.Count >=2 )
                 {
                     (demonList[demonList.Count - 2] as GameObject).SetActive(true);
-                    (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(80);
-
+                    (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.3f);
                 }
                 Destroy(demon);
             }
         }
 
         if (demonList.Count > 0)
-            (demonList[demonList.Count - 1] as GameObject).GetComponent<DemonPlayerController>().setAlpha(90);
+            (demonList[demonList.Count - 1] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.6f);
         StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
         foreach (var obj in objects)
         {
@@ -164,7 +162,16 @@ public class GameManager : MonoBehaviour
         }
 
         player.playerAct.stage_number = current_stage_index + 1;
+
         StartCoroutine(StageAnimation());
+    }
+    public void demonGO()
+    {
+        GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
+        foreach (var demon in demons)
+        {
+            demon.GetComponent<DemonPlayerController>().gogo();
+        }
     }
     public void setControl()
     {
@@ -212,13 +219,13 @@ public class GameManager : MonoBehaviour
         dpc.myStage = current_stage_index; // 인덱스를 더한 뒤 불리기 때문에..
         dpc.startPosition = GameObject.Find("Spawn Point").transform.position;
         dpc.stage_number = current_stage_index;
-        dpc.setAlpha(0.9f);
+        dpc.setAlpha(0.6f);
         demon.SetActive(true);
         demonList.Add(demon);
 
         if (demonList.Count>=2)
         {
-            (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(80);
+            (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.3f);
         }
         if (demonList.Count >= 3)
         {

@@ -58,6 +58,18 @@ public class StoreOrder
         }
         return returnOrder;
     }
+    public void GetOrderAll(int stage, ref ArrayList arrayList)
+    {//Demon Awake에서 자기 stage 오더들을 싹다 추출해가게 하면 될듯
+       
+        for (int i = 0; i < orders.Count; i++)
+        {
+            if (((Order)orders[i]).stage == stage)
+            {
+                arrayList.Add(orders[i]);
+                continue;
+            }
+        }
+    }
     public void ResetOrder(int stage)
     {
         for (int i = orders.Count - 1; i >= 0; i--)
