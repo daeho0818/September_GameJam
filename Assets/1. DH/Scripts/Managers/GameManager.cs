@@ -28,9 +28,9 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
     }
-    public void demonReady()
+    public void demonReady(int power = 1)
     {
-        readyDemonCount++;
+        readyDemonCount+=power;
         if (readyDemonCount > 1||demonList.Count<=1)
         {
             GameObject[] demons = GameObject.FindGameObjectsWithTag("Demon");
@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            SoundManager.Instance.StopMusic();
+            SoundManager.Instance.PlaySound(SoundManager.Instance.pauseSound);
         }
         if (GetStageIndex()!=1 && Input.GetKeyDown(KeyCode.Q))
         {
@@ -182,10 +184,12 @@ public class GameManager : MonoBehaviour
         {
             demon.GetComponent<DemonPlayerController>().gogo();
         }
+
     }
     public void setControl()
     {
 
+        player.GetComponent<SoundPlayer>().isMuted = false;
         player.enabled = true;
         demonPlayer.enabled = false;
     }
@@ -206,10 +210,11 @@ public class GameManager : MonoBehaviour
     IEnumerator StageExitAnimation(int current_stage_index, bool isMustDestroy)
     {
         StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+
         foreach (var obj in objects)
         {
             StartCoroutine(obj.DestroyEffect(isMustDestroy));
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(0.05f);
         }
         yield return new WaitForSeconds(0.2f);
         if (isMustDestroy)
@@ -245,6 +250,7 @@ public class GameManager : MonoBehaviour
     }
     public void onResetButtonClicked()
     {
+        player.GetComponent<SoundPlayer>().isMuted = true;
         player.enabled = false;
         demonPlayer.myStage = GetStageIndex();
         demonPlayer.startPosition = player.transform.position;

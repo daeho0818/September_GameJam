@@ -27,6 +27,12 @@ public class StageObject : MonoBehaviour
     }
     private void OnEnable()
     {
+
+        BoxCollider2D[] boxCollider2Ds = GetComponentsInChildren<BoxCollider2D>();
+        foreach (var item in boxCollider2Ds)
+        {
+            item.enabled = true;
+        }
         SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         if (spriteRenderer != null)
             spriteRenderer.color = new Color(1, 1, 1, 0);
@@ -65,7 +71,11 @@ public class StageObject : MonoBehaviour
         Vector3 originalPos = transform.position;
         Color color = new Color(1, 1, 1, 1);
         SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
+        BoxCollider2D[] boxCollider2Ds = GetComponentsInChildren<BoxCollider2D>();
+        foreach (var item in boxCollider2Ds)
+        {
+            item.enabled = false;
+        }
         while (eTime < duration)
         {
             transform.position = Vector3.Lerp(originalPos, originalPos - effectVector, eTime / duration);
