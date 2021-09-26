@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public CameraActor cameraActor;
 
     public GameObject[] stages;
+    public GameObject reButton;
     [SerializeField] GameObject option;
     [SerializeField] PlayerController player;
     [SerializeField] DemonPlayerController demonPlayer;
@@ -60,6 +61,17 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (reButton != null)
+        {
+            if (GetStageIndex() != 1)
+            {
+                reButton.SetActive(true);
+            }
+            else
+            {
+                reButton.SetActive(false);
+            }
+        }
         if (stage_clear)
         {
             // SoundManager.Instance.SoundPlay(SoundManager.Instance.stage_clear);
@@ -71,18 +83,36 @@ public class GameManager : MonoBehaviour
         {
             player.IsDestroy = false;
             // player.playerAnimation.SetAnimatorState(5);
-            Invoke("GoToSpawnPoint", 2);
+            Invoke("GoToSpawnPoint", 0.5f);
         }
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
+            Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+        }
+        if (GetStageIndex()!=1 && Input.GetKeyDown(KeyCode.Q))
+        {
+            onResetButtonClicked();
         }
 
     }
+    public void continueBtn()
+    {
+        Time.timeScale = 1;
+    }
+    public void shutDown()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 어플리케이션 종료
+#endif
+    }
     void GoToSpawnPoint()
     {
+        player.gameObject.SetActive(true);
         player.transform.position = GameObject.Find("Spawn Point").transform.position;
         player.playerMove.storeOrder.ResetOrder(GetStageIndex());
     }
