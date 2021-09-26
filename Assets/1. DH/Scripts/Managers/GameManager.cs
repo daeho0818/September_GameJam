@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
         }
-        
+
     }
     void GoToSpawnPoint()
     {
@@ -99,27 +99,16 @@ public class GameManager : MonoBehaviour
         {
             if (current_stage_index >= 0)
             {
-                StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
-                foreach (var obj in objects)
-                {
-                    if (obj.is_destroy_object) obj.gameObject.SetActive(false);
-                }
+                //이전스테이지 삭제
+                StartCoroutine(StageExitAnimation(current_stage_index, false));
             }
-
-            stages[++current_stage_index].SetActive(true);
-            if (true)
-            {
-                StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
-                foreach (var obj in objects)
-                {
-                    obj.gameObject.SetActive(true);
-                }
-            }
+            ++current_stage_index;
+            //스테이지변경 후 생성
 
             spawnDemon();
 
             player.playerAct.stage_number = current_stage_index + 1;
-            player.playerMove.storeOrder.ResetOrder(current_stage_index+1);
+            player.playerMove.storeOrder.ResetOrder(current_stage_index + 1);
             StartCoroutine(StageAnimation());
         }
         else
@@ -129,14 +118,14 @@ public class GameManager : MonoBehaviour
     }
     public void LoadPastStage()
     {
-        for (int i = demonList.Count-1; i >= 0; i--)
+        for (int i = demonList.Count - 1; i >= 0; i--)
         {
             var d = demonList[i];
             var demon = d as GameObject;
             if (demon.GetComponent<DemonPlayerController>().myStage == current_stage_index)
             {
                 demonList.Remove(demon);
-                if (demonList.Count >=2 )
+                if (demonList.Count >= 2)
                 {
                     (demonList[demonList.Count - 2] as GameObject).SetActive(true);
                     (demonList[demonList.Count - 2] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.3f);
@@ -144,22 +133,13 @@ public class GameManager : MonoBehaviour
                 Destroy(demon);
             }
         }
-
         if (demonList.Count > 0)
             (demonList[demonList.Count - 1] as GameObject).GetComponent<DemonPlayerController>().setAlpha(0.6f);
-        StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
-        foreach (var obj in objects)
-        {
-            obj.gameObject.SetActive(false);
-        }
 
-        stages[current_stage_index--].SetActive(false);
+        //지금스테이지 삭제
+        StartCoroutine(StageExitAnimation(current_stage_index, true));
+        current_stage_index--;
 
-        objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
-        foreach (var obj in objects)
-        {
-            obj.gameObject.SetActive(true);
-        }
 
         player.playerAct.stage_number = current_stage_index + 1;
 
@@ -181,31 +161,29 @@ public class GameManager : MonoBehaviour
     }
     IEnumerator StageAnimation()
     {
-        SpriteRenderer[] renderers = stages[current_stage_index].GetComponentsInChildren<SpriteRenderer>();
-        foreach (var renderer in renderers)
+        stages[current_stage_index].SetActive(true);
+        StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+        foreach (var obj in objects)
         {
-            renderer.color = new Color(renderer.color.r, renderer.color.g, renderer.color.b, 0);
-            if (!renderer.CompareTag("Flag"))
-                renderer.transform.Translate(Vector2.down * 5);
+            obj.gameObject.SetActive(true);
+            StartCoroutine(obj.SpawnEffect());
+            yield return new WaitForSeconds(0.1f);
         }
-
-        foreach (var renderer in renderers)
-        {
-            while (true)
-            {
-                if (renderer.color.a >= 1)
-                    break;
-
-                renderer.color += new Color(0, 0, 0, 0.01f);
-                if (!renderer.CompareTag("Flag"))
-                    renderer.transform.Translate(Vector2.up * 5 / 100);
-                yield return new WaitForSeconds(0.0001f);
-            }
-        }
-
         stage_clear = false;
         player.gameObject.SetActive(true);
         coroutine = null;
+    }
+    IEnumerator StageExitAnimation(int current_stage_index, bool isMustDestroy)
+    {
+        StageObject[] objects = stages[current_stage_index].GetComponent<StageObject>().childObjects;
+        foreach (var obj in objects)
+        {
+            StartCoroutine(obj.DestroyEffect(isMustDestroy));
+            yield return new WaitForSeconds(0.1f);
+        }
+        yield return new WaitForSeconds(0.2f);
+        if (isMustDestroy)
+            stages[current_stage_index].SetActive(false);
     }
     public int GetStageIndex()
     {
