@@ -123,7 +123,7 @@ public class DemonPlayerController : PlayerController
     IEnumerator resetBackOrder()
     {
         isBack = true;
-        float myDuration = 3f;
+        float myDuration = 2f;
         if (playerMove.isMain)
             playerMove.mycontroller.isBack = true;
         bool isChaged = false;

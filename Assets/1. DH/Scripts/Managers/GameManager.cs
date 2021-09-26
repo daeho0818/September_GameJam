@@ -91,6 +91,8 @@ public class GameManager : MonoBehaviour
             option.SetActive(!option.activeSelf);
             window_open = option.activeSelf;
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
+            SoundManager.Instance.StopMusic();
+            SoundManager.Instance.PlaySound(SoundManager.Instance.pauseSound);
         }
         if (GetStageIndex()!=1 && Input.GetKeyDown(KeyCode.Q))
         {
@@ -182,10 +184,12 @@ public class GameManager : MonoBehaviour
         {
             demon.GetComponent<DemonPlayerController>().gogo();
         }
+
     }
     public void setControl()
     {
 
+        player.GetComponent<SoundPlayer>().isMuted = false;
         player.enabled = true;
         demonPlayer.enabled = false;
     }
@@ -245,6 +249,7 @@ public class GameManager : MonoBehaviour
     }
     public void onResetButtonClicked()
     {
+        player.GetComponent<SoundPlayer>().isMuted = true;
         player.enabled = false;
         demonPlayer.myStage = GetStageIndex();
         demonPlayer.startPosition = player.transform.position;
